@@ -23,7 +23,7 @@ body {
 	}
 }
 
-.cardholdermixin {
+.cardholdermixin() {
 	display: inline;
 	list-style: none;
 	margin: 0px;
@@ -36,9 +36,9 @@ table.cardholder {
 	background-color: white;
 	td {
 		ul {
-			.cardholdermixin;
+			.cardholdermixin();
 			li {
-				.cardholdermixin;
+				.cardholdermixin();
 			}
 		}
 	}
@@ -47,6 +47,7 @@ table.vertical.cardHolder {
 	td {
 		ul {
 			li {
+				margin-bottom: -150px;
 			}
 		}
 	}

@@ -55,7 +55,51 @@ cardholder = (cardNames=[], options) ->
 		"
 	rv
 
+GameState =
+	players: {}
+	actionStacks: {}
+	moneyStacks: {}
+	pointStacks: {}
+	playStack: null
+	currentPlayer: undefined
+	game_id: undefined
+
+randstr = () ->
+	"#{Math.random()}".substr(2)
+
 waterfall [
+	() -> # initial settings
+		@num_of_players = 2;
+		#10 curses
+		#8 each victory card
+		@proceed();
+	() -> # obtain card information
+		$.getJSON('./data/cards.json').done (data)=>
+			@cards = data
+			@proceed();
+	() -> # initialize GameState
+		# generate actionStacks
+		actionStacks = []
+		while actionStacks.length<10
+			card = choose @cards
+			if ['action','action-attack','action-reaction'].some((a)->a is card.type)
+				if actionStacks.every((a)->a.cardName isnt card.name)
+					actionStacks.push
+						cardName:card.name
+						amount:10
+		# generate players
+		for i in [1..@num_of_players]
+			player_id = ''
+			while player_id.length<20
+				player_id += randstr()
+			player_id = player_id.substr(0,20)
+			GameState.players[player_id] =
+				player_id: player_id
+				human: (i is 1)
+				hand: []
+				deck: []
+				discard: []
+		@proceed();
 	() -> # setup livequery for cardholder
 		normal_card_width = 182;
 		normal_card_height = 291;
@@ -131,10 +175,6 @@ waterfall [
 			<div id='bottom_wrapper'><center id='bottom_giftbox'></center></div>
 		"
 		@proceed()
-	() -> # obtain card information
-		$.getJSON('./data/cards.json').done (data)=>
-			@cards = data
-			@proceed()
 	() -> # draw 10 cards for the table
 		@tableCardNames = []
 		while @tableCardNames.length<10

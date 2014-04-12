@@ -1,11 +1,11 @@
 class GameState
 {
 	Player{} players; // associate array
-	Stack[10] actionStacks; // ten stacks of action cards per table
-	Stack[3] moneyStacks;
-	Stack[3] pointStacks;
-	Stack curseStack;
-	Stack playStack;
+	Stack{} actionStacks; // associate array action stacks (cardName is index)
+	Stack{} moneyStacks; // associate array money stacks (cardName is index)
+	Stack{} pointStacks; // associate array point stacks (cardName is index)
+	// curseStack is part of pointStacks (indexed 'curse')
+	CardName[] playStack;
 	String currentPlayer;
 	String game_id; // randomly generated numerical ID of 20 characters long
 
@@ -13,24 +13,27 @@ class GameState
 	{
 		String player_id; // randomly generated numerical ID of 20 characters long
 		Boolean human; // true or false
-		Stack[] hand;
-		Stack[] deck;
-		Stack[] discard;
+		CardName[] hand;
+		CardName[] deck;
+		CardName[] discard;
 	}
 
 	class Stack
 	{
-		Card[] cards;
+		CardName cardName;
+		int amount;
 	}
+	
+	class CardName is String;
+}
 
-	class Card
-	{
-		String name;
-		String type;
-		int cost;
-		Delta deltas;
-		String desc;
-	}
+class Card
+{
+	CardName name;
+	String type;
+	int cost;
+	Delta deltas;
+	String desc;
 
 	class Delta
 	{
@@ -39,6 +42,8 @@ class GameState
 		int cards=0;
 		int coins=0;
 	}
+
+	class CardName is String;
 }
 
 class PlayerResponse
