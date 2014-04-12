@@ -32,13 +32,16 @@ cardholder = (cardNames=[], options) ->
 		rv.attributes.push "data-height='#{height}'"
 	if thumb
 		rv.attributes.push "data-thumb='#{thumb}'"
+	rv.classNames = ['cardholder']
+	if orientation
+		rv.classNames.push orientation
 	rv.cardNames = cardNames
 	rv.addCard = (cardName) ->
 		rv.cardNames.push cardName
 	rv.html = () ->
 		lis = _.map(@cardNames,(a)->"<li data-card='#{a}'></li>").join('');
 		"
-			<table class='cardholder' style='display:none;' #{@attributes.join(' ')}>
+			<table class='#{@classNames.join(' ')}' style='display:none;' #{@attributes.join(' ')}>
 				<tr>
 					<td valign='middle'>
 						<center>
