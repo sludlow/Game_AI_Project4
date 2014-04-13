@@ -1,9 +1,9 @@
 class GameState
 {
 	Player{} players; // associate array (player_id is index)
-	Stack{} actionStacks; // associate array action stacks (cardName is index)
-	Stack{} moneyStacks; // associate array money stacks (cardName is index)
-	Stack{} pointStacks; // associate array point stacks (cardName is index)
+	Stack{} actionStacks; // associate array (cardName is index)
+	Stack{} moneyStacks; // associate array (cardName is index)
+	Stack{} pointStacks; // associate array (cardName is index)
 	// curseStack is part of pointStacks (indexed 'curse')
 	CardName[] cardsPlayedInRound;
 	// cardsPlayedInRound will always be blank when sent to PHP,
