@@ -15,7 +15,7 @@ class GameState
 	class Player
 	{
 		String player_id; // randomly generated numerical ID of 20 chars long
-		Boolean human; // true or false
+		Boolean human;
 		CardName[] hand;
 		CardName[] deck;
 		// though AI should not have knowledge of this, but deck will always
