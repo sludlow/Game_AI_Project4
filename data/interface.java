@@ -7,11 +7,11 @@ class GameState
 	// curseStack is part of pointStacks (indexed 'curse')
 	CardName[] playStack;
 	String currentPlayer;
-	String game_id; // randomly generated numerical ID of 20 characters long
+	String game_id; // randomly generated numerical ID of 20 chars long
 
 	class Player
 	{
-		String player_id; // randomly generated numerical ID of 20 characters long
+		String player_id; // randomly generated numerical ID of 20 chars long
 		Boolean human; // true or false
 		CardName[] hand;
 		CardName[] deck;
