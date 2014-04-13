@@ -7,7 +7,7 @@ class GameState
 	// curseStack is part of pointStacks (indexed 'curse')
 	CardName[] cardsPlayedInRound;
 	// cardsPlayedInRound will always be blank when sent to PHP,
-	//     since the AI will send all cards played and purchased, etc.
+	//     since the AI will send all cards played and bought, etc.
 	//     in PlayerResponse
 	String currentPlayer;
 	String game_id; // randomly generated numerical ID of 20 chars long
