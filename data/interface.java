@@ -32,11 +32,11 @@ class GameState
 
 class Card
 {
-	CardName name;
-	String type;
+	CardName name; // allowed characters are a to z and space
+	String type; // allowed characters are a to z and dash
 	int cost;
 	Deltas deltas;
-	String desc;
+	String desc; // when there is an icon, [2 COIN] and [SHIELD] are used
 
 	class Deltas
 	{
