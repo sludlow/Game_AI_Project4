@@ -35,10 +35,10 @@ class Card
 	CardName name;
 	String type;
 	int cost;
-	Delta deltas;
+	Deltas deltas;
 	String desc;
 
-	class Delta
+	class Deltas
 	{
 		int actions=0; // optional, default is 0
 		int buys=0;    // optional, default is 0
