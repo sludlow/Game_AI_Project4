@@ -7,8 +7,8 @@ class GameState
 	// curseStack is part of pointStacks (indexed 'curse')
 	CardName[] cardsPlayedInRound;
 	// cardsPlayedInRound will always be blank when sent to ai/index.php,
-	//     since the AI will send all cards played and bought, etc.
-	//     in PlayerResponse
+	//     since the AI will send all cards played and bought, etc. during the
+	//     round via PlayerResponse
 	String currentPlayer; // player_id for the current player.
 	String game_id; // randomly generated numerical ID of 20 chars long
 
@@ -19,7 +19,8 @@ class GameState
 		CardName[] hand;
 		CardName[] deck;
 		// though AI should not have knowledge of this, but deck will always
-		//     have the next 5 cards be indexed 0 to 4
+		//     have the next 5 cards be indexed 0 to 4 in the JavaScript
+		//     implementation.
 		CardName[] discard; // last discarded card will always be indexed 0
 	}
 
