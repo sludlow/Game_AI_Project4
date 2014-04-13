@@ -37,7 +37,7 @@ class Card
 {
 	CardName name; // allowed characters are a to z and space
 	String type; // allowed characters are a to z and dash
-	// type is enum of 'treasure','victory','curse','action', 'action-attack'
+	// type is enum of 'treasure','victory','curse','action','action-attack'
 	int cost;
 	String value; // only used in 'treasure', 'victory', and 'curse' cards
 	Deltas deltas;
