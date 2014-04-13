@@ -61,7 +61,7 @@ class PlayerResponse
 	
 	class PlayerMove
 	{
-		String action; // enum of 'play', 'buy'
+		String action; // enum of 'play','buy'
 		String cardName; // object of the action
 	}
 }

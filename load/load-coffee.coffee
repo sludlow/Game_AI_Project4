@@ -148,7 +148,7 @@ waterfall [
 			for i in [1..7]
 				GameState.players[player_id].discard.push stack_draw(GameState.moneyStacks.copper)
 			for i in [1..3]
-				GameState.players[player_id].discard.push 'estate' # estate already adjusted per amount of players
+				GameState.players[player_id].discard.push 'estate' # estate stack already adjusted per amount of players
 			reset_discard GameState.players[player_id]
 			for i in [1..5]
 				GameState.players[player_id].hand.push GameState.players[player_id].deck.shift()
@@ -233,21 +233,7 @@ waterfall [
 		$(document.body).append "
 			<div id='bottom_wrapper'><center id='bottom_giftbox'></center></div>
 		"
-		@proceed()
-	() -> # draw 10 cards for the table
-		@tableCardNames = []
-		while @tableCardNames.length<10
-			card = choose @cards
-			if ['action','action-attack','action-reaction'].some((a)->a is card.type)
-				if @tableCardNames.every((a)->a isnt card.name)
-					@tableCardNames.push card.name
-		@handCardNames = []
-		while @handCardNames.length<5
-			card = choose @cards
-			if ['action','action-attack','action-reaction'].some((a)->a is card.type)
-				if @handCardNames.every((a)->a isnt card.name)
-					@handCardNames.push card.name
-		@proceed()
+		# @proceed()
 	() -> # setup game board
 		table = new cardholder @tableCardNames,
 			width: 10
