@@ -17,7 +17,7 @@ class GameState
 		String player_id; // randomly generated numerical ID of 20 chars long
 		Boolean human; // true or false
 		CardName[] hand;
-		CardName[] deck; // next 5 cards will always be indexed 0-4
+		CardName[] deck; // next 5 cards will always be indexed 0 to 4
 		CardName[] discard; // last discarded card will always be indexed 0
 	}
 
