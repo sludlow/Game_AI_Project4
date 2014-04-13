@@ -4,7 +4,8 @@ include_once 'lib/common.php';
 
 $GameState = read_gamestate();
 
-// process $GameState
-// echo json_encode(playerResponse);
+// determine best moves
+
+// echo json_encode(playerResponse); // playerResponse is an instance of PlayerResponse
 
 ?>
