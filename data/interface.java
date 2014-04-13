@@ -8,7 +8,7 @@ class GameState
 	CardName[] cardsPlayedInRound;
 	// cardsPlayedInRound will always be blank when sent to ai/index.php,
 	//     since the AI will send all cards played and bought, etc. during the
-	//     round via PlayerResponse
+	//     round within JSON of PlayerResponse
 	String currentPlayer; // player_id for the current player.
 	String game_id; // randomly generated numerical ID of 20 chars long
 
