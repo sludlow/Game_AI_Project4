@@ -56,10 +56,10 @@ cardholder = (cardNames=[], options) ->
 	rv
 
 GameState =
-	players: {}
 	actionStacks: {}
 	moneyStacks: {}
 	pointStacks: {}
+	players: {}
 	cardsPlayedInRound: []
 	currentPlayer: undefined
 	game_id: undefined
@@ -97,9 +97,6 @@ waterfall [
 			@cards = data
 			@proceed();
 	() -> # initialize GameState
-		# set game_id
-		GameState.game_id = make_id();
-		
 		# generate actionStacks
 		actionStacks = []
 		while actionStacks.length<10
@@ -149,12 +146,17 @@ waterfall [
 				deck: []
 				discard: []
 			for i in [1..7]
-				GameState.players[player_id].discard.push stack_draw(GameState.moneyStacks['copper'])
+				GameState.players[player_id].discard.push stack_draw(GameState.moneyStacks.copper)
 			for i in [1..3]
 				GameState.players[player_id].discard.push 'estate' # estate already adjusted per amount of players
 			reset_discard GameState.players[player_id]
 			for i in [1..5]
 				GameState.players[player_id].hand.push GameState.players[player_id].deck.shift()
+			if i is 1
+				GameState.currentPlayer = player_id;
+		
+		# set game_id
+		GameState.game_id = make_id();
 		
 		@proceed();
 	() -> # setup livequery for cardholder
