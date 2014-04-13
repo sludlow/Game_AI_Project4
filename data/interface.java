@@ -40,10 +40,10 @@ class Card
 
 	class Delta
 	{
-		int actions=0;
-		int buys=0;
-		int cards=0;
-		int coins=0;
+		int actions=0; // optional, default is 0
+		int buys=0;    // optional, default is 0
+		int cards=0;   // optional, default is 0
+		int coins=0;   // optional, default is 0
 	}
 
 	class CardName is String;
