@@ -1,6 +1,6 @@
 class GameState
 {
-	Player{} players; // associate array
+	Player{} players; // associate array (player_id is index)
 	Stack{} actionStacks; // associate array action stacks (cardName is index)
 	Stack{} moneyStacks; // associate array money stacks (cardName is index)
 	Stack{} pointStacks; // associate array point stacks (cardName is index)
