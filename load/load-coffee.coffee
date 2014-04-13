@@ -97,15 +97,16 @@ waterfall [
 		actionStacks.forEach (a)->GameState.actionStacks[a.cardName]=a;
 		
 		# generate moneyStacks
-		moneyStacks = {}
-		while moneyStacks.length<10
-			card = choose @cards
-			if ['action','action-attack','action-reaction'].some((a)->a is card.type)
-				if actionStacks.every((a)->a.cardName isnt card.name)
-					actionStacks.push
-						cardName:card.name
-						amount:10
-		GameState.actionStacks=actionStacks;
+		GameState.moneyStacks=
+			copper:
+				cardName: 'copper'
+				amount: 60
+			silver:
+				cardName: 'silver'
+				amount: 40
+			gold:
+				cardName: 'gold'
+				amount: 30
 		
 		# generate players
 		for i in [1..@num_of_players]
