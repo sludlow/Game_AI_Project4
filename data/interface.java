@@ -52,6 +52,7 @@ class Card
 class PlayerResponse
 {
 	PlayerMove[] moves;
+	// moves are ordered in the way that they should be processed.
 	
 	class PlayerMove
 	{
