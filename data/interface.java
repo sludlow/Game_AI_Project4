@@ -18,6 +18,8 @@ class GameState
 		Boolean human; // true or false
 		CardName[] hand;
 		CardName[] deck;
+		// though AI should not have knowledge of this, but deck will always
+		//     have the next 5 cards be indexed 0 to 4
 		CardName[] discard; // last discarded card will always be indexed 0
 	}
 

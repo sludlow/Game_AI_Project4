@@ -64,6 +64,22 @@ GameState =
 	currentPlayer: undefined
 	game_id: undefined
 
+stack_draw = (stack) ->
+	stack.amount--
+	return stack.cardName
+
+shuffle = () ->
+	rv = []
+	orig = [].slice.call if arguments.length is 1 and arguments[0].length then arguments[0] else arguments
+	while orig.length
+		rv.push orig.splice(Math.floor(Math.random()*orig.length),1)[0]
+	return rv
+
+reset_discard = (player) ->
+	player.deck = shuffle player.discard
+	player.discard = []
+	true
+
 make_id = () ->
 	randstr = () ->
 		"#{Math.random()}".substr(2)
@@ -108,6 +124,21 @@ waterfall [
 				cardName: 'gold'
 				amount: 30
 		
+		# generate pointStacks
+		GameState.pointStacks=
+			estate:
+				cardName: 'estate'
+				amount: if @num_of_players is 2 then 8 else 12
+			duchy:
+				cardName: 'duchy'
+				amount: if @num_of_players is 2 then 8 else 12
+			province:
+				cardName: 'province'
+				amount: if @num_of_players is 2 then 8 else 12
+			curse:
+				cardName: 'curse'
+				amount: 10*(@num_of_players-1)
+		
 		# generate players
 		for i in [1..@num_of_players]
 			player_id = make_id()
@@ -117,6 +148,14 @@ waterfall [
 				hand: []
 				deck: []
 				discard: []
+			for i in [1..7]
+				GameState.players[player_id].discard.push stack_draw(GameState.moneyStacks['copper'])
+			for i in [1..3]
+				GameState.players[player_id].discard.push 'estate' # estate already adjusted per amount of players
+			reset_discard GameState.players[player_id]
+			for i in [1..5]
+				GameState.players[player_id].hand.push GameState.players[player_id].deck.shift()
+		
 		@proceed();
 	() -> # setup livequery for cardholder
 		normal_card_width = 182;
