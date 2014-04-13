@@ -6,7 +6,7 @@ class GameState
 	Stack{} pointStacks; // associate array (cardName is index)
 	// curseStack is part of pointStacks (indexed 'curse')
 	CardName[] cardsPlayedInRound;
-	// cardsPlayedInRound will always be blank when sent to PHP,
+	// cardsPlayedInRound will always be blank when sent to ai/index.php,
 	//     since the AI will send all cards played and bought, etc.
 	//     in PlayerResponse
 	String currentPlayer; // player_id for the current player.
