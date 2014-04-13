@@ -9,7 +9,7 @@ class GameState
 	// cardsPlayedInRound will always be blank when sent to PHP,
 	//     since the AI will send all cards played and bought, etc.
 	//     in PlayerResponse
-	String currentPlayer;
+	String currentPlayer; // player_id for the current player.
 	String game_id; // randomly generated numerical ID of 20 chars long
 
 	class Player
@@ -17,8 +17,8 @@ class GameState
 		String player_id; // randomly generated numerical ID of 20 chars long
 		Boolean human; // true or false
 		CardName[] hand;
-		CardName[] deck;
-		CardName[] discard;
+		CardName[] deck; // next 5 cards will always be indexed 0-4
+		CardName[] discard; // last discarded card will always be indexed 0
 	}
 
 	class Stack
