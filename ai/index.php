@@ -5,6 +5,6 @@ include_once 'lib/common.php';
 $GameState = read_gamestate();
 
 // process $GameState
-// echo json_encode(playermoves);
+// echo json_encode(playerResponse);
 
 ?>
