@@ -21,35 +21,29 @@ choose = () ->
 		arguments[Math.floor(arguments.length*Math.random())]
 
 
-cardholder = (cardNames=[], options) ->
+cardholder = (stacks=[], options) ->
 	if options
-		{width,height,thumb,orientation}=options
+		{width,height,size,orientation}=options
 	rv = {}
 	rv.attributes = []
 	if width
 		rv.attributes.push "data-width='#{width}'"
 	if height
 		rv.attributes.push "data-height='#{height}'"
-	if thumb
-		rv.attributes.push "data-thumb='#{thumb}'"
+	if size
+		rv.attributes.push "data-size='#{size}'"
 	rv.classNames = ['cardholder']
 	if orientation
 		rv.classNames.push orientation
-	rv.cardNames = cardNames
+	rv.stacks = stacks
 	rv.addCard = (cardName) ->
 		rv.cardNames.push cardName
 	rv.html = () ->
-		lis = _.map(@cardNames,(a)->"<li data-card='#{a}'></li>").join('');
+		tds = _.map(@stacks,(a)->"<td data-card='#{a.cardName}' data-amount='#{a.amount}'></td>").join('');
 		"
 			<table class='#{@classNames.join(' ')}' style='display:none;' #{@attributes.join(' ')}>
 				<tr>
-					<td valign='middle'>
-						<center>
-							<ul>
-								#{lis}
-							</ul>
-						</center>
-					</td>
+					#{tds}
 				</tr>
 			</table>
 		"
@@ -67,6 +61,9 @@ GameState =
 stack_draw = (stack) ->
 	stack.amount--
 	return stack.cardName
+
+toStacks = (cardNames) ->
+	_.map(cardNames,(cardName)->{cardName:cardName,amount:1})
 
 shuffle = () ->
 	rv = []
@@ -137,8 +134,11 @@ waterfall [
 				amount: 10*(@num_of_players-1)
 		
 		# generate players
+		first_player_id = -1
 		for i in [1..@num_of_players]
 			player_id = make_id()
+			if first_player_id is -1
+				first_player_id = player_id
 			GameState.players[player_id] =
 				player_id: player_id
 				human: (i is 1)
@@ -152,41 +152,51 @@ waterfall [
 			reset_discard GameState.players[player_id]
 			for i in [1..5]
 				GameState.players[player_id].hand.push GameState.players[player_id].deck.shift()
-			if i is 1
-				GameState.currentPlayer = player_id;
+		GameState.currentPlayer = first_player_id
 		
 		# set game_id
 		GameState.game_id = make_id();
 		
+		
 		@proceed();
 	() -> # setup livequery for cardholder
-		normal_card_width = 182;
-		normal_card_height = 291;
-		thumb_card_width = 112;
-		thumb_card_height = Math.round(thumb_card_width/normal_card_width*normal_card_height);
-		$('table.cardholder li').livequery ()->
-			if $(@).closest('table.cardholder').attr('data-thumb') is 'true'
-				width_attr = " width='#{thumb_card_width}'"
-			else
-				width_attr = " width='#{normal_card_width}'"
+		card_width = {}
+		card_height = {}
+		card_width.normal = 182;
+		card_height.normal = 291;
+		card_width.thumb = 112;
+		card_height.thumb = Math.round(card_width.thumb/card_width.normal*card_height.normal);
+		card_width.tiny = 50;
+		card_height.tiny = Math.round(card_width.tiny/card_width.normal*card_height.normal);
+		$('table.cardholder td[data-card]').livequery ()->
+			width_attr = " width='#{card_width[$(@).closest('table.cardholder').attr('data-size')]}'"
 			html = ""
+			html += "<div class='card_count_wrapper'>"
+			html += "<center class='card_count_giftbox'>#{$(@).attr('data-amount')}</center>"
+			html += "</div>"
 			html += "<img#{width_attr} class='card' src='./images/cards/"
 			html += $(@).attr('data-card').toLowerCase().replace(`/[^a-zA-Z0-9]/g`,'')
 			html += ".jpg' alt='#{$(@).attr('data-card').toUpperCase()}' />"
 			$(@).html html
 		$('table.cardholder').livequery ()->
 			if +$(@).attr('data-width')>0
-				card_width=if $(@).attr('data-thumb') is 'true' then thumb_card_width else normal_card_width;
-				card_width+=10; # for extra spacing in between.
-				$(@).add($(@).find('td')).attr('width',card_width*+$(@).attr('data-width'))
-				$(@).add($(@).find('td')).css('width',"#{card_width*+$(@).attr('data-width')}px");
-				$(@).add($(@).find('td')).css('max-width',"#{card_width*+$(@).attr('data-width')}px");
+				cw=card_width[$(@).attr('data-size')];
+				cw+=10; # for extra spacing in between.
+				$(@).add($(@).find('td')).attr('width',cw)
+				$(@).add($(@).find('td')).css('width',"#{cw}px");
+				$(@).add($(@).find('td')).css('max-width',"#{cw}px");
 			if +$(@).attr('data-height')>0
-				card_height=if $(@).attr('data-thumb') is 'true' then thumb_card_height else normal_card_height;
-				card_height+=10; # for extra spacing in between.
-				$(@).add($(@).find('td')).attr('height',card_height*+$(@).attr('data-height'));
-				$(@).add($(@).find('td')).css('height',"#{card_height*+$(@).attr('data-height')}px");
-				$(@).add($(@).find('td')).css('max-height',"#{card_height*+$(@).attr('data-height')}px");
+				ch=card_height[$(@).attr('data-size')];
+				ch+=10; # for extra spacing in between.
+				$(@).add($(@).find('td')).attr('height',ch);
+				$(@).add($(@).find('td')).css('height',"#{ch}px");
+				$(@).add($(@).find('td')).css('max-height',"#{ch}px");
+			$(@).attr('width',cw*+$(@).attr('data-width'));
+			$(@).css('width',"#{cw*+$(@).attr('data-width')}px");
+			$(@).css('max-width',"#{cw*+$(@).attr('data-width')}px");
+			$(@).attr('height',ch*+$(@).attr('data-height'));
+			$(@).css('height',"#{ch*+$(@).attr('data-height')}px");
+			$(@).css('max-height',"#{ch*+$(@).attr('data-height')}px");
 			$(@).css('display','block');
 		@proceed()
 	() -> # setup card overlays on hover
@@ -229,21 +239,43 @@ waterfall [
 				</tr>
 			</table>
 		"
+		# top container for cards in actionStacks
+		$(document.body).append "
+			<div id='top_wrapper'><center id='top_giftbox'></center></div>
+		"
+		# left container for cards in moneyStacks and pointStacks
+		$(document.body).append "
+			<table id='left_bottom_wrapper'>
+				<tr>
+					<td id='left_bottom_giftbox' valign='middle'></td>
+				</tr>
+			</table>
+		"
 		# bottom container for cards in hand
 		$(document.body).append "
 			<div id='bottom_wrapper'><center id='bottom_giftbox'></center></div>
 		"
-		# @proceed()
+		@proceed()
 	() -> # setup game board
-		table = new cardholder @tableCardNames,
+		actionStacks = new cardholder GameState.actionStacks,
 			width: 10
 			height: 1
-			thumb: true
-		$('#giftbox').html table.html()
+			size: 'thumb'
+		$('#top_giftbox').html actionStacks.html()
 		
-		hand = new cardholder @handCardNames,
+		moneyStacks = new cardholder GameState.moneyStacks,
+			width: 3
+			height: 1
+			size: 'tiny'
+		pointStacks = new cardholder GameState.pointStacks,
+			width: 4
+			height: 1
+			size: 'tiny'
+		$('#left_bottom_giftbox').html "#{moneyStacks.html()}<br />#{pointStacks.html()}"
+		
+		hand = new cardholder toStacks(GameState.players[GameState.currentPlayer].hand),
 			height: 1
 			width: 5
-			thumb: true
+			size: 'thumb'
 		$('#bottom_giftbox').html hand.html()
 ]

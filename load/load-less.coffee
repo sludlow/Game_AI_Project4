@@ -2,7 +2,7 @@ less_pp = [
 	{s:`/@import \(font\) "/g`,r:"@import (css) \"#{location.protocol}//fonts.googleapis.com/css?family="}
 ]
 
-$.get('less/style.less').always (data) ->
+$.get('less/style.less?'+Math.random()).always (data) ->
 	if typeof data is 'string'
 		less_pp.forEach (sr) ->
 			data = data.replace(sr.s,sr.r);

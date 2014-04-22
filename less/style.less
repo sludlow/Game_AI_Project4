@@ -23,23 +23,40 @@ body {
 	}
 }
 
-.cardholdermixin() {
-	display: inline;
-	list-style: none;
-	margin: 0px;
-	padding: 0px;
+#left_bottom_wrapper {
+	position:absolute;
+	bottom:0px;
+	left:0px;
+	#left_bottom_giftbox {
+	}
 }
+
+#top_wrapper {
+	position:absolute;
+	top:0px;
+	left:0px;
+	width:100%;
+	#top_giftbox {
+	}
+}
+
 table.cardholder {
 	border: 10px solid white;
 	border-radius: 10px;
 	box-shadow: 0px 0px 10px black;
 	background-color: white;
 	td {
-		ul {
-			.cardholdermixin();
-			li {
-				.cardholdermixin();
-			}
+		div.card_count_wrapper {
+			position: relative;
+			z-index: 30;
+			width: 18px;
+			height: 18px;
+			color: white;
+			font-weight: bold;
+			background-color: RGBA(0,0,255,0.5);
+			border: 1px solid white;
+			margin-bottom: -25px;
+			padding: 1px;
 		}
 	}
 }
