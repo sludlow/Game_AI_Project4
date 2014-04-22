@@ -279,6 +279,15 @@ waterfall [
 				size: 'tiny'
 			$('#left_bottom_giftbox').html "#{moneyStacks.html()}<br />#{pointStacks.html()}"
 		
+			if GameState.cardsPlayedInTurn.length > 0
+				cardsInPlay = new cardholder toStacks(GameState.cardsPlayedInTurn),
+					height: 1
+					width: GameState.cardsPlayedInTurn.length
+					size: 'thumb'
+				$('#giftbox').html cardsInPlay.html()
+			else
+				$('#giftbox').html ''
+			
 			if GameState.players[GameState.currentPlayer].hand.length > 0
 				hand = new cardholder toStacks(GameState.players[GameState.currentPlayer].hand),
 					height: 1
