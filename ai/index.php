@@ -4,12 +4,28 @@ include_once 'lib/common.php';
 
 // play all the coppers from hand
 $hand = $GameState['players'][$GameState['currentPlayer']]['hand'];
-$coppers = 0;
+$coins = 0;
 foreach ($hand as $cardName)
 {
 	if ($cardName == 'copper')
 	{
-		$coppers++;
+		$coins++;
+		$playerResponse['moves'][]=array(
+				'action' => 'play',
+				'object' => $cardName
+			);
+	}
+	else if ($cardName == 'silver')
+	{
+		$coins+=2;
+		$playerResponse['moves'][]=array(
+				'action' => 'play',
+				'object' => $cardName
+			);
+	}
+	else if ($cardName == 'gold')
+	{
+		$coins+=3;
 		$playerResponse['moves'][]=array(
 				'action' => 'play',
 				'object' => $cardName
@@ -25,13 +41,13 @@ function randomize_stacks($a, $b)
 uasort($stacks,'randomize_stacks');
 foreach ($stacks as $cardName => $stack)
 {
-	if ($card_by_name[$cardName]['cost']<$coppers and $stack['amount']>0 and $cardName != 'curse')
+	if ($card_by_name[$cardName]['cost']<$coins and $stack['amount']>0 and !in_array($cardName,array('curse','copper')))
 	{
 		$playerResponse['moves'][]=array(
 				'action' => 'buy',
 				'object' => $cardName
 			);
-		$coppers-=$card_by_name[$cardName]['cost'];
+		$coins-=$card_by_name[$cardName]['cost'];
 		$stack['amount']--;
 	}
 }
