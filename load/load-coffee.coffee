@@ -340,8 +340,7 @@ waterfall [
 							GameState.players[GameState.currentPlayer].hand.splice(cardNum,1)
 							GameState.cardsPlayedInTurn.push cardName
 							break
-		if @playerResponse.moves.length
-			@proceed()
+		@proceed()
 	() -> # finalize turn
 		@display_gamestate();
 		myTimeout ()=>
