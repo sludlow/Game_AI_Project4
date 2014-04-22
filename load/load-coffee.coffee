@@ -1,3 +1,5 @@
+debug = true
+
 waterfall = (stream) ->
 	if stream.length is 0
 		return
@@ -54,7 +56,7 @@ GameState =
 	moneyStacks: {}
 	pointStacks: {}
 	players: {}
-	cardsPlayedInRound: []
+	cardsPlayedInTurn: []
 	currentPlayer: undefined
 	game_id: undefined
 
@@ -238,11 +240,19 @@ waterfall [
 		$(document.body).append "
 			<div id='top_wrapper'><center id='top_giftbox'></center></div>
 		"
-		# left container for cards in moneyStacks and pointStacks
+		# left bottom container for cards in moneyStacks and pointStacks
 		$(document.body).append "
 			<table id='left_bottom_wrapper'>
 				<tr>
 					<td id='left_bottom_giftbox' valign='middle'></td>
+				</tr>
+			</table>
+		"
+		# right bottom container for top card in discard pile
+		$(document.body).append "
+			<table id='right_bottom_wrapper'>
+				<tr>
+					<td id='right_bottom_giftbox' valign='middle'></td>
 				</tr>
 			</table>
 		"
@@ -269,17 +279,57 @@ waterfall [
 				size: 'tiny'
 			$('#left_bottom_giftbox').html "#{moneyStacks.html()}<br />#{pointStacks.html()}"
 		
-			hand = new cardholder toStacks(GameState.players[GameState.currentPlayer].hand),
-				height: 1
-				width: 5
-				size: 'thumb'
-			$('#bottom_giftbox').html hand.html()
+			if GameState.players[GameState.currentPlayer].hand.length > 0
+				hand = new cardholder toStacks(GameState.players[GameState.currentPlayer].hand),
+					height: 1
+					width: GameState.players[GameState.currentPlayer].hand.length
+					size: 'thumb'
+				$('#bottom_giftbox').html hand.html()
+			else
+				$('#bottom_giftbox').html ''
+			
+			if GameState.players[GameState.currentPlayer].discard.length > 0
+				discard = new cardholder toStacks([GameState.players[GameState.currentPlayer].discard[0]]),
+					height: 1
+					width: 1
+					size: 'tiny'
+				$('#right_bottom_giftbox').html discard.html()
+			else
+				$('#right_bottom_giftbox').html ''
 		@display_gamestate()
 		@proceed()
 	() -> # obtain moves from AI
-		$.getJSON('./ai/index.php').done (data)=>
-			@moves = data
-			@proceed()
+		$.ajax
+			url: (if debug then './testai.php' else './ai/index.php')
+			data: {_:JSON.stringify GameState}
+			dataType: 'text'
+			type: 'POST'
+			traditional: true
+			success: (text)=>
+				alert text
+				data = JSON.parse text
+				@playerResponse = data
+				@proceed()
+			error: () =>
+				alert 'error!'
 	() -> # process moves
-		
+		for move in @playerResponse.moves
+			switch move.action
+				when 'buy'
+					if move.object of GameState.actionStacks
+						bought_card = stack_draw GameState.actionStacks[move.object]
+					else if move.object of GameState.moneyStacks
+						bought_card = stack_draw GameState.moneyStacks[move.object]
+					else if move.object of GameState.pointStacks
+						bought_card = stack_draw GameState.pointStacks[move.object]
+					GameState.players[GameState.currentPlayer].discard.unshift bought_card
+				when 'play'
+					for cardName,cardNum in GameState.players[GameState.currentPlayer].hand
+						if cardName is move.object
+							GameState.players[GameState.currentPlayer].hand.splice(cardNum,1)
+							GameState.cardsPlayedInTurn.push cardName
+							break
+		@proceed()
+	() -> # 
+		@display_gamestate();
 ]
