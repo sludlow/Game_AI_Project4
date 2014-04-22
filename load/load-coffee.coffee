@@ -88,6 +88,8 @@ make_id = () ->
 		rv+=randstr()
 	rv.substr(0,20)
 
+myTimeout = (func) -> setTimeout func,300
+
 waterfall [
 	() -> # initial settings
 		@num_of_players = 2;
@@ -154,7 +156,7 @@ waterfall [
 			reset_discard GameState.players[player_id]
 			for i in [1..5]
 				GameState.players[player_id].hand.push GameState.players[player_id].deck.shift()
-		GameState.currentPlayer = @player_ids[0]
+		GameState.currentPlayer = GameState.player_ids[0]
 		
 		# set game_id
 		GameState.game_id = make_id();
@@ -316,10 +318,11 @@ waterfall [
 			type: 'POST'
 			traditional: true
 			success: (text)=>
-				alert text
-				data = JSON.parse text
-				@playerResponse = data
-				@proceed()
+				myTimeout ()=>
+					alert "Player #{GameState.currentPlayer} choose moves:\n#{text}"
+					data = JSON.parse text
+					@playerResponse = data
+					@proceed()
 	() -> # process moves
 		for move in @playerResponse.moves
 			switch move.action
@@ -337,9 +340,27 @@ waterfall [
 							GameState.players[GameState.currentPlayer].hand.splice(cardNum,1)
 							GameState.cardsPlayedInTurn.push cardName
 							break
-		@proceed()
-	() -> # 
+		if @playerResponse.moves.length
+			@proceed()
+	() -> # finalize turn
 		@display_gamestate();
-		alert "Player #{GameState.currentPlayer}'s turn has ended."
-		@proceed(-2)
+		myTimeout ()=>
+			if not confirm "Player #{GameState.currentPlayer}'s turn has ended.\n\nClick Cancel to end game."
+				return
+			for cardPlayed in GameState.cardsPlayedInTurn
+				GameState.players[GameState.currentPlayer].discard.unshift cardPlayed
+			GameState.cardsPlayedInTurn=[]
+			for cardInHand in GameState.players[GameState.currentPlayer].hand
+				GameState.players[GameState.currentPlayer].discard.unshift cardInHand
+			GameState.players[GameState.currentPlayer].hand=[]
+			for i in [1..5]
+				if GameState.players[GameState.currentPlayer].deck.length is 0
+					reset_discard GameState.players[GameState.currentPlayer]
+				cardFromDeck = GameState.players[GameState.currentPlayer].deck.shift()
+				GameState.players[GameState.currentPlayer].hand.push cardFromDeck
+			
+			next_player_id_index = (GameState.player_ids.indexOf(GameState.currentPlayer)+1)%GameState.player_ids.length
+			GameState.currentPlayer = GameState.player_ids[next_player_id_index]
+			@display_gamestate()
+			@proceed(-2)
 ]
