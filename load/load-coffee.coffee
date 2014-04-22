@@ -150,13 +150,14 @@ waterfall [
 				hand: []
 				deck: []
 				discard: []
-			for i in [1..7]
-				GameState.players[player_id].discard.push stack_draw(GameState.moneyStacks.copper)
+			for i in [1..4]
+				GameState.players[player_id].hand.push stack_draw(GameState.moneyStacks.copper)
 			for i in [1..3]
-				GameState.players[player_id].discard.push 'estate' # estate stack already adjusted per amount of players
-			reset_discard GameState.players[player_id]
-			for i in [1..5]
-				GameState.players[player_id].hand.push GameState.players[player_id].deck.shift()
+				GameState.players[player_id].deck.push stack_draw(GameState.moneyStacks.copper)
+			for i in [1..1]
+				GameState.players[player_id].hand.push 'estate' # estate stack already adjusted per amount of players
+			for i in [1..2]
+				GameState.players[player_id].deck.push 'estate' # estate stack already adjusted per amount of players
 		GameState.currentPlayer = GameState.next_player_ids.shift()
 		GameState.next_player_ids.push GameState.currentPlayer
 		
