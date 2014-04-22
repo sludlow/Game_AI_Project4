@@ -27,7 +27,7 @@ foreach ($hand as $cardName)
 $stacks=$GameState['actionStacks']+$GameState['moneyStacks']+$GameState['pointStacks'];
 foreach ($stacks as $cardName => $stack)
 {
-	if ($card_by_name[$cardName]['cost']<$coppers and $stack['amount']>0)
+	if ($card_by_name[$cardName]['cost']<$coppers and $stack['amount']>0 and $cardName != 'curse')
 	{
 		$playerResponse['moves'][]=array(
 				'action' => 'buy',
