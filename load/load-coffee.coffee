@@ -1,4 +1,4 @@
-debug = false
+debug = true
 
 waterfall = (stream) ->
 	if stream.length is 0
@@ -56,6 +56,7 @@ GameState =
 	moneyStacks: {}
 	pointStacks: {}
 	players: {}
+	player_ids: []
 	cardsPlayedInTurn: []
 	currentPlayer: undefined
 	game_id: undefined
@@ -139,7 +140,7 @@ waterfall [
 		@player_ids = []
 		for i in [1..@num_of_players]
 			player_id = make_id()
-			@player_ids.push player_id
+			GameState.player_ids.push player_id
 			GameState.players[player_id] =
 				player_id: player_id
 				human: (i is 1)
@@ -319,8 +320,6 @@ waterfall [
 				data = JSON.parse text
 				@playerResponse = data
 				@proceed()
-			error: () =>
-				alert 'error!'
 	() -> # process moves
 		for move in @playerResponse.moves
 			switch move.action
@@ -341,4 +340,6 @@ waterfall [
 		@proceed()
 	() -> # 
 		@display_gamestate();
+		alert "Player #{GameState.currentPlayer}'s turn has ended."
+		@proceed(-2)
 ]
