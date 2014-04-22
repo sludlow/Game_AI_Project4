@@ -105,7 +105,7 @@ waterfall [
 		actionStacks = []
 		while actionStacks.length<10
 			card = choose @cards
-			if ['action','action-attack','action-reaction'].some((a)->a is card.type)
+			if ['action','action-attack','action-reaction'].some((a)->a is card.type) or card.name is 'gardens'
 				if actionStacks.every((a)->a.cardName isnt card.name)
 					actionStacks.push
 						cardName:card.name

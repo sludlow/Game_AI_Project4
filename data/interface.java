@@ -10,8 +10,6 @@ class GameState
 	// cardsPlayedInTurn will almost always be blank when sent to ai/index.php,
 	//     since the AI should usually send all cards played and bought, etc.
 	//     during the turn within JSON of PlayerResponse.
-	//     There might be possible exceptions, when there are no cards in deck,
-	//     but cards are drawn from deck into the hand.
 	String currentPlayer; // player_id for the current player.
 	String game_id; // randomly generated numerical ID of 20 chars long
 
@@ -64,7 +62,8 @@ class PlayerResponse
 	
 	class PlayerMove
 	{
-		String action; // enum of 'play','buy'
-		String cardName; // object of the action
+		String action; // enum of 'play','buy','draw','shuffle'
+		String object; // object of the action
+		
 	}
 }
