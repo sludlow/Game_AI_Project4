@@ -43,7 +43,7 @@ cardholder = (stacks=[], options) ->
 	rv.addCard = (cardName) ->
 		rv.cardNames.push cardName
 	rv.html = () ->
-		tds = _.map(@stacks,(a)->"<td data-card='#{a.cardName}' data-amount='#{a.amount}'></td>").join('');
+		tds = _.map(@stacks,(a)->"<td data-card='#{a.cardName}' data-amount='#{a.amount}' style='#{if a.amount is 0 then 'opacity:0.25' else ''}'></td>").join('');
 		"
 			<table class='#{@classNames.join(' ')}' style='display:none;' #{@attributes.join(' ')}>
 				<tr>
@@ -304,17 +304,24 @@ waterfall [
 			else
 				$('#bottom_giftbox').html ''
 			
-			if GameState.players[GameState.currentPlayer].discard.length > 0
-				discard_display =
-					cardName: GameState.players[GameState.currentPlayer].discard[0]
-					amount: GameState.players[GameState.currentPlayer].discard.length
-				discard = new cardholder [discard_display],
-					height: 1
-					width: 1
-					size: 'tiny'
-				$('#right_bottom_giftbox').html discard.html()
-			else
-				$('#right_bottom_giftbox').html ''
+			right_bottom_giftbox_htmls = []
+			deck_display =
+				cardName: (if GameState.players[GameState.currentPlayer].deck.length then 'back' else undefined)
+				amount: GameState.players[GameState.currentPlayer].deck.length
+			deck = new cardholder [deck_display],
+				height: 1
+				width: 1
+				size: 'tiny'
+			right_bottom_giftbox_htmls.push "<td>#{deck.html()}</td>"
+			discard_display =
+				cardName: GameState.players[GameState.currentPlayer].discard[0]
+				amount: GameState.players[GameState.currentPlayer].discard.length
+			discard = new cardholder [discard_display],
+				height: 1
+				width: 1
+				size: 'tiny'
+			right_bottom_giftbox_htmls.push "<td>#{discard.html()}</td>"
+			$('#right_bottom_giftbox').html "<table><tr>#{right_bottom_giftbox_htmls.join('')}</tr></table>"
 		@display_gamestate()
 		@proceed()
 	() -> # obtain moves from AI
@@ -365,7 +372,7 @@ waterfall [
 				cardFromDeck = GameState.players[GameState.currentPlayer].deck.shift()
 				GameState.players[GameState.currentPlayer].hand.push cardFromDeck
 			
-			GameState.currentPlayer = GameState.next_player_ids.unshift()
+			GameState.currentPlayer = GameState.next_player_ids.shift()
 			GameState.next_player_ids.push GameState.currentPlayer
 			@display_gamestate()
 			@proceed(-2)
