@@ -25,7 +25,7 @@ choose = () ->
 
 cardholder = (stacks=[], options) ->
 	if options
-		{width,height,size,orientation}=options
+		{width,height,size,orientation,hidecount}=options
 	rv = {}
 	rv.attributes = []
 	if width
@@ -34,6 +34,8 @@ cardholder = (stacks=[], options) ->
 		rv.attributes.push "data-height='#{height}'"
 	if size
 		rv.attributes.push "data-size='#{size}'"
+	if hidecount
+		rv.attributes.push "data-hidecount='true'"
 	rv.classNames = ['cardholder']
 	if orientation
 		rv.classNames.push orientation
@@ -56,7 +58,7 @@ GameState =
 	moneyStacks: {}
 	pointStacks: {}
 	players: {}
-	player_ids: []
+	next_player_ids: []
 	cardsPlayedInTurn: []
 	currentPlayer: undefined
 	game_id: undefined
@@ -139,10 +141,9 @@ waterfall [
 				amount: 10*(@num_of_players-1)
 		
 		# generate players
-		@player_ids = []
 		for i in [1..@num_of_players]
 			player_id = make_id()
-			GameState.player_ids.push player_id
+			GameState.next_player_ids.push player_id
 			GameState.players[player_id] =
 				player_id: player_id
 				human: (i is 1)
@@ -156,11 +157,11 @@ waterfall [
 			reset_discard GameState.players[player_id]
 			for i in [1..5]
 				GameState.players[player_id].hand.push GameState.players[player_id].deck.shift()
-		GameState.currentPlayer = GameState.player_ids[0]
+		GameState.currentPlayer = GameState.next_player_ids.shift()
+		GameState.next_player_ids.push GameState.currentPlayer
 		
 		# set game_id
 		GameState.game_id = make_id();
-		
 		
 		@proceed();
 	() -> # setup livequery for cardholder
@@ -175,9 +176,10 @@ waterfall [
 		$('table.cardholder td[data-card]').livequery ()->
 			width_attr = " width='#{card_width[$(@).closest('table.cardholder').attr('data-size')]}'"
 			html = ""
-			html += "<div class='card_count_wrapper'>"
-			html += "<center class='card_count_giftbox'>#{$(@).attr('data-amount')}</center>"
-			html += "</div>"
+			if !$(@).closest('table.cardholder').attr('data-hidecount')
+				html += "<div class='card_count_wrapper'>"
+				html += "<center class='card_count_giftbox'>#{$(@).attr('data-amount')}</center>"
+				html += "</div>"
 			html += "<img#{width_attr} class='card' src='./images/cards/"
 			html += $(@).attr('data-card').toLowerCase().replace(`/[^a-zA-Z0-9]/g`,'')
 			html += ".jpg' alt='#{$(@).attr('data-card').toUpperCase()}' />"
@@ -287,6 +289,7 @@ waterfall [
 					height: 1
 					width: GameState.cardsPlayedInTurn.length
 					size: 'thumb'
+					hidecount: true
 				$('#giftbox').html cardsInPlay.html()
 			else
 				$('#giftbox').html ''
@@ -296,12 +299,16 @@ waterfall [
 					height: 1
 					width: GameState.players[GameState.currentPlayer].hand.length
 					size: 'thumb'
+					hidecount: true
 				$('#bottom_giftbox').html hand.html()
 			else
 				$('#bottom_giftbox').html ''
 			
 			if GameState.players[GameState.currentPlayer].discard.length > 0
-				discard = new cardholder toStacks([GameState.players[GameState.currentPlayer].discard[0]]),
+				discard_display =
+					cardName: GameState.players[GameState.currentPlayer].discard[0]
+					amount: GameState.players[GameState.currentPlayer].discard.length
+				discard = new cardholder [discard_display],
 					height: 1
 					width: 1
 					size: 'tiny'
@@ -358,8 +365,8 @@ waterfall [
 				cardFromDeck = GameState.players[GameState.currentPlayer].deck.shift()
 				GameState.players[GameState.currentPlayer].hand.push cardFromDeck
 			
-			next_player_id_index = (GameState.player_ids.indexOf(GameState.currentPlayer)+1)%GameState.player_ids.length
-			GameState.currentPlayer = GameState.player_ids[next_player_id_index]
+			GameState.currentPlayer = GameState.next_player_ids.unshift()
+			GameState.next_player_ids.push GameState.currentPlayer
 			@display_gamestate()
 			@proceed(-2)
 ]
