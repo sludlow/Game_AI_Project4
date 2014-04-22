@@ -24,7 +24,8 @@ foreach ($hand as $cardName)
 	}
 }
 
-foreach ($GameState['actionStacks'] as $cardName => $stack)
+$stacks=$GameState['actionStacks']+$GameState['moneyStacks']+$GameState['pointStacks'];
+foreach ($stacks as $cardName => $stack)
 {
 	if ($card_by_name[$cardName]['cost']<$coppers and $stack['amount']>0)
 	{
@@ -33,6 +34,7 @@ foreach ($GameState['actionStacks'] as $cardName => $stack)
 				'object' => $cardName
 			);
 		$coppers-=$card_by_name[$cardName]['cost'];
+		$stack['amount']--;
 	}
 }
 
