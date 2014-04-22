@@ -88,11 +88,11 @@ make_id = () ->
 waterfall [
 	() -> # initial settings
 		@num_of_players = 2;
-		@proceed();
+		@proceed()
 	() -> # obtain card information
 		$.getJSON('./data/cards.json').done (data)=>
 			@cards = data
-			@proceed();
+			@proceed()
 	() -> # initialize GameState
 		# generate actionStacks
 		actionStacks = []
@@ -134,11 +134,10 @@ waterfall [
 				amount: 10*(@num_of_players-1)
 		
 		# generate players
-		first_player_id = -1
+		@player_ids = []
 		for i in [1..@num_of_players]
 			player_id = make_id()
-			if first_player_id is -1
-				first_player_id = player_id
+			@player_ids.push player_id
 			GameState.players[player_id] =
 				player_id: player_id
 				human: (i is 1)
@@ -152,7 +151,7 @@ waterfall [
 			reset_discard GameState.players[player_id]
 			for i in [1..5]
 				GameState.players[player_id].hand.push GameState.players[player_id].deck.shift()
-		GameState.currentPlayer = first_player_id
+		GameState.currentPlayer = @player_ids[0]
 		
 		# set game_id
 		GameState.game_id = make_id();
@@ -207,10 +206,6 @@ waterfall [
 						<center>
 							<a class='info button'>Info</a><br />
 							<a class='action button'>Play</a><br />
-							<a class='action button'>Draw</a><br />
-							<a class='action button'>Buy</a><br />
-							<a class='action button'>Take</a><br />
-							<a class='action button'>Trash</a>
 						</center>
 					</td>
 				</tr>
@@ -257,25 +252,34 @@ waterfall [
 		"
 		@proceed()
 	() -> # setup game board
-		actionStacks = new cardholder GameState.actionStacks,
-			width: 10
-			height: 1
-			size: 'thumb'
-		$('#top_giftbox').html actionStacks.html()
+		@display_gamestate = () ->
+			actionStacks = new cardholder GameState.actionStacks,
+				width: 10
+				height: 1
+				size: 'thumb'
+			$('#top_giftbox').html actionStacks.html()
 		
-		moneyStacks = new cardholder GameState.moneyStacks,
-			width: 3
-			height: 1
-			size: 'tiny'
-		pointStacks = new cardholder GameState.pointStacks,
-			width: 4
-			height: 1
-			size: 'tiny'
-		$('#left_bottom_giftbox').html "#{moneyStacks.html()}<br />#{pointStacks.html()}"
+			moneyStacks = new cardholder GameState.moneyStacks,
+				width: 3
+				height: 1
+				size: 'tiny'
+			pointStacks = new cardholder GameState.pointStacks,
+				width: 4
+				height: 1
+				size: 'tiny'
+			$('#left_bottom_giftbox').html "#{moneyStacks.html()}<br />#{pointStacks.html()}"
 		
-		hand = new cardholder toStacks(GameState.players[GameState.currentPlayer].hand),
-			height: 1
-			width: 5
-			size: 'thumb'
-		$('#bottom_giftbox').html hand.html()
+			hand = new cardholder toStacks(GameState.players[GameState.currentPlayer].hand),
+				height: 1
+				width: 5
+				size: 'thumb'
+			$('#bottom_giftbox').html hand.html()
+		@display_gamestate()
+		@proceed()
+	() -> # obtain moves from AI
+		$.getJSON('./ai/index.php').done (data)=>
+			@moves = data
+			@proceed()
+	() -> # process moves
+		
 ]

@@ -5,10 +5,10 @@ class GameState
 	Stack{} pointStacks; // associate array (cardName is index)
 	// curseStack is part of pointStacks (indexed 'curse')
 	Player{} players; // associate array (player_id is index)
-	CardName[] cardsPlayedInRound;
-	// cardsPlayedInRound will almost always be blank when sent to ai/index.php,
+	CardName[] cardsPlayedInTurn;
+	// cardsPlayedInTurn will almost always be blank when sent to ai/index.php,
 	//     since the AI should usually send all cards played and bought, etc.
-	//     during the round within JSON of PlayerResponse.
+	//     during the turn within JSON of PlayerResponse.
 	//     There might be possible exceptions, when there are no cards in deck,
 	//     but cards are drawn from deck into the hand.
 	String currentPlayer; // player_id for the current player.
