@@ -306,7 +306,7 @@ waterfall [
 			
 			right_bottom_giftbox_htmls = []
 			deck_display =
-				cardName: (if GameState.players[GameState.currentPlayer].deck.length then 'back' else undefined)
+				cardName: 'back'
 				amount: GameState.players[GameState.currentPlayer].deck.length
 			deck = new cardholder [deck_display],
 				height: 1
