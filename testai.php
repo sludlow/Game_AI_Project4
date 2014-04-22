@@ -25,6 +25,11 @@ foreach ($hand as $cardName)
 }
 
 $stacks=$GameState['actionStacks']+$GameState['moneyStacks']+$GameState['pointStacks'];
+function randomize_stacks($a, $b)
+{
+	return (rand(0,1)==1)?1:-1;
+}
+uasort($stacks,'randomize_stacks');
 foreach ($stacks as $cardName => $stack)
 {
 	if ($card_by_name[$cardName]['cost']<$coppers and $stack['amount']>0 and $cardName != 'curse')
