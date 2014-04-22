@@ -63,7 +63,7 @@ class PlayerResponse
 	class PlayerMove
 	{
 		String action; // enum of 'play','buy','draw','shuffle'
-		String object; // object of the action
-		
+		CardName object; // object of the action
+		CardName[] updateDeck; // used for shuffle only, to send shuffled deck back to turn based engine
 	}
 }
