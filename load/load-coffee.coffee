@@ -150,6 +150,7 @@ waterfall [
 				hand: []
 				deck: []
 				discard: []
+			# enforce 4-3 split
 			for i in [1..4]
 				GameState.players[player_id].hand.push stack_draw(GameState.moneyStacks.copper)
 			for i in [1..3]
