@@ -2,7 +2,7 @@
 
 function read_gamestate()
 {
-	return json_decode($_POST['_'],true);
+	return json_decode(stripslashes($_POST['_']),true);;
 }
 
 ?>
