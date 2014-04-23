@@ -38,4 +38,74 @@ function draw_from_deck()
 	return $drawnCard;
 }
 
+function count_money()
+{
+	global $GameState;
+	$hand = $GameState['players'][$GameState['currentPlayer']]['hand'];
+	$coins = 0;
+	foreach ($hand as $cardName)
+	{
+		if ($cardName == 'copper')
+		{
+			$coins++;
+		}
+		else if ($cardName == 'silver')
+		{
+			$coins+=2;
+		}
+		else if ($cardName == 'gold')
+		{
+			$coins+=3;
+		}
+	}
+	return $coins;
+}
+
+function play_money()
+{
+	global $GameState,$playerResponse;
+	$hand = $GameState['players'][$GameState['currentPlayer']]['hand'];
+	foreach ($hand as $cardName)
+	{
+		if ($cardName == 'gold')
+		{
+			$playerResponse['moves'][]=array(
+					'action' => 'play',
+					'object' => $cardName
+				);
+		}
+		
+		else if ($cardName == 'silver')
+		{
+			$playerResponse['moves'][]=array(
+					'action' => 'play',
+					'object' => $cardName
+				);
+		}
+		else if ($cardName == 'copper')
+		{
+			$playerResponse['moves'][]=array(
+					'action' => 'play',
+					'object' => $cardName
+				);
+		}
+	}
+}
+
+function buy_card($purchaseCard)
+{
+	global $GameState,$playerResponse;
+	$stacks=$GameState['actionStacks']+$GameState['moneyStacks']+$GameState['pointStacks'];
+	$stack = $stacks[$purchaseCard];
+	if($stack['amount']>0)
+	{
+		$playerResponse['moves'][]=array(
+				'action' => 'buy',
+				'object' => $purchaseCard
+			);
+		$stack['amount']--;
+	}
+}
+
+
 ?>
