@@ -7,12 +7,25 @@ function read_gamestate()
 
 $GameState = read_gamestate();
 $playerResponse = array('moves'=>array());
+$money = 0;
+$actions = 1;
+$buys = 1;
 
 $cards = json_decode(file_get_contents('../data/cards.json'),true);
 $card_by_name = array();
 foreach ($cards as $card)
 {
 	$card_by_name[$card['name']]=$card;
+}
+
+function getBuys()
+{
+	return $buys;
+}
+
+function getActions()
+{
+	return $actions;
 }
 
 function draw_from_deck()
@@ -42,7 +55,7 @@ function count_money()
 {
 	global $GameState;
 	$hand = $GameState['players'][$GameState['currentPlayer']]['hand'];
-	$coins = 0;
+	$coins = $money;
 	foreach ($hand as $cardName)
 	{
 		if ($cardName == 'copper')
@@ -149,7 +162,73 @@ function smithy()
 	{
 		draw_from_deck();
 	}
+	$actions -= 1;
 }
 
+function laboratory()
+{
+	global $GameState,$playerResponse;
+	$playerResponse['moves'][]=array(
+				'action' => 'play',
+				'object' => 'laboratory'
+			);
+	for($i = 0; $i < 2; $i++)
+	{
+		draw_from_deck();
+	}
+}
+
+function moneylender()
+{
+	global $GameState,$playerResponse;
+	$playerResponse['moves'][]=array(
+				'action' => 'play',]
+				'object' => 'moneylender'
+			);
+	$hand = $GameState['players'][$GameState['currentPlayer']]['hand'];
+	foreach ($hand as $cardName)
+	{
+		if ($cardName == 'copper')
+		{
+			$playerResponse['moves'][]=array(
+					'action' => 'trash',
+					'object' => $cardName
+				);
+				break;
+		}
+	}
+	$money += 3;
+	$actions -= 1;
+}
+
+function witch()
+{
+	global $GameState,$playerResponse;
+	$playerResponse['moves'][]=array(
+				'action' => 'play',
+				'object' => 'witch'
+			);
+	for($i = 0; $i < 2; $i++)
+	{
+		draw_from_deck();
+	}
+	//ADD code here to give every other player a curse
+	//
+	//
+	//
+	//
+	$actions -= 1;
+}
+
+function festival()
+{
+	global $GameState,$playerResponse;
+	$playerResponse['moves'][]=array(
+				'action' => 'play',
+				'object' => 'festival'
+			);
+	money += 2;
+	actions += 1;
+}
 
 ?>
