@@ -1,4 +1,4 @@
-debug = false
+debug = true
 
 waterfall = (stream) ->
 	if stream.length is 0

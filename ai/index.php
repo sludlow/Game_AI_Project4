@@ -52,6 +52,7 @@ foreach ($stacks as $cardName => $stack)
 	}
 }
 
+
 echo json_encode($playerResponse); // playerResponse is an instance of PlayerResponse
 
 ?>

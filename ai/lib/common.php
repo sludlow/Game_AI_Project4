@@ -38,4 +38,118 @@ function draw_from_deck()
 	return $drawnCard;
 }
 
+function count_money()
+{
+	global $GameState;
+	$hand = $GameState['players'][$GameState['currentPlayer']]['hand'];
+	$coins = 0;
+	foreach ($hand as $cardName)
+	{
+		if ($cardName == 'copper')
+		{
+			$coins++;
+		}
+		else if ($cardName == 'silver')
+		{
+			$coins+=2;
+		}
+		else if ($cardName == 'gold')
+		{
+			$coins+=3;
+		}
+	}
+	return $coins;
+}
+
+function play_money()
+{
+	global $GameState,$playerResponse;
+	$hand = $GameState['players'][$GameState['currentPlayer']]['hand'];
+	foreach ($hand as $cardName)
+	{
+		if ($cardName == 'gold')
+		{
+			$playerResponse['moves'][]=array(
+					'action' => 'play',
+					'object' => $cardName
+				);
+		}
+		
+		else if ($cardName == 'silver')
+		{
+			$playerResponse['moves'][]=array(
+					'action' => 'play',
+					'object' => $cardName
+				);
+		}
+		else if ($cardName == 'copper')
+		{
+			$playerResponse['moves'][]=array(
+					'action' => 'play',
+					'object' => $cardName
+				);
+		}
+	}
+}
+
+function buy_card($purchaseCard)
+{
+	global $GameState,$playerResponse;
+	$stacks=$GameState['actionStacks']+$GameState['moneyStacks']+$GameState['pointStacks'];
+	$stack = $stacks[$purchaseCard];
+	if($stack['amount']>0)
+	{
+		$playerResponse['moves'][]=array(
+				'action' => 'buy',
+				'object' => $purchaseCard
+			);
+		$stack['amount']--;
+	}
+}
+
+function numOfCardsOwned($targetCard)
+{
+	global $GameState;
+	$numCards = 0;
+	$hand = $GameState['players'][$GameState['currentPlayer']]['hand'];
+	$deck = $GameState['players'][$GameState['currentPlayer']]['deck'];
+	$discard = $GameState['players'][$GameState['currentPlayer']]['discard'];
+	foreach ($hand as $cardName)
+	{
+		if ($cardName == $targetCard)
+		{
+			$numCards++;
+		}
+	}
+	foreach ($deck as $cardName)
+	{
+		if ($cardName == $targetCard)
+		{
+			$numCards++;
+		}
+	}
+	foreach ($discard as $cardName)
+	{
+		if ($cardName == $targetCard)
+		{
+			$numCards++;
+		}
+	}
+	return $numCards;
+}
+
+function smithy()
+{
+	global $GameState,$playerResponse;
+	$playerResponse['moves'][]=array(
+				'action' => 'play',
+				'object' => 'smithy'
+			);
+	for($i = 0; $i < 3; $i++)
+	{
+		draw_from_deck();
+	}
+}
+
+
 ?>
