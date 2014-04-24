@@ -155,7 +155,7 @@ function numOfCardsOwned($targetCard)
 
 function smithy()
 {
-	global $GameState,$playerResponse;
+	global $GameState,$playerResponse, $actions;
 	$playerResponse['moves'][]=array(
 				'action' => 'play',
 				'object' => 'smithy'

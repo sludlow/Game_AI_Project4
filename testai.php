@@ -16,7 +16,8 @@ foreach ($stacks as $cardName)
 	}
 }
 
-$actions = 1;
+//$actions = 1;
+$actions = getActions();
 $hand = $GameState['players'][$GameState['currentPlayer']]['hand'];
 while($actions != 0)
 {
@@ -35,7 +36,7 @@ while($actions != 0)
 			smithy();
 		}
 	}
-	$actions--;
+	//$actions--;
 }
 $coins = count_money();
 play_money();
