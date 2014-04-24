@@ -16,11 +16,6 @@ foreach ($stacks as $cardName)
 	}
 }
 
-<<<<<<< HEAD
-=======
-//$actions = 1;
-$actions = getActions();
->>>>>>> 662090e6dba5a807a3e73c794838d926ba0b09fc
 $hand = $GameState['players'][$GameState['currentPlayer']]['hand'];
 
 while(getActions() > 0)
@@ -44,10 +39,6 @@ while(getActions() > 0)
 			break;
 		}
 	}
-<<<<<<< HEAD
-=======
-	//$actions--;
->>>>>>> 662090e6dba5a807a3e73c794838d926ba0b09fc
 }
 $coins = count_money();
 play_money();
