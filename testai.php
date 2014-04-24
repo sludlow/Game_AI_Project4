@@ -5,14 +5,14 @@ include 'lib/common.php';
 
 // Big Money/ Big Smithy
 $hasSmithy = false;
-$numSmithys = 0;
+$numSmithys = -1;
 $stacks=$GameState['actionStacks'];
 foreach ($stacks as $cardName)
 {
 	if ($cardName['cardName'] == 'smithy')
 	{
 		$hasSmithy = true;
-		//$numSmithys = numOfCardsOwned('smithy');
+		$numSmithys = numOfCardsOwned('smithy');
 	}
 }
 
@@ -55,12 +55,6 @@ else if($coins == 5 or $coins == 4 or $coins == 3)
 {
 	buy_card('silver');
 }
-/*
-else if($coins == 5 or $coins == 4 or $coins == 3)
-{
-	buy_card('silver');
-}
-*/
 
 echo json_encode($playerResponse); // playerResponse is an instance of PlayerResponse
 
