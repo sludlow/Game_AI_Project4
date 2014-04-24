@@ -22,13 +22,17 @@ while($actions != 0)
 {
 	if($hasSmithy == true)
 	{
+		$playSmithy = false;
 		foreach ($hand as $cardName)
 		{
 			if ($cardName == 'smithy')
 			{
-				smithy();
-				$actions--;
+				$playSmithy = true;
 			}
+		}
+		if($playSmithy == true)
+		{
+			smithy();
 		}
 	}
 	$actions--;
