@@ -107,6 +107,7 @@ function buy_card($purchaseCard)
 	}
 }
 
+<<<<<<< HEAD
 function numOfCardsOwned($targetCard)
 {
 	global $GameState;
@@ -151,5 +152,7 @@ function smithy()
 	}
 }
 
+=======
+>>>>>>> 422b20d3c836c25ca0799cc219822593178925c2
 
 ?>
