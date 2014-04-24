@@ -240,4 +240,29 @@ function festival()
 	$actions += 1;
 }
 
+function workshop()
+{
+	global $GameState,$playerResponse;
+	$playerResponse['moves'][]=array(
+				'action' => 'play',
+				'object' => 'workshop'
+			);
+	 buy_card("gardens");
+	$actions -= 1;
+}
+
+function woodcutter()
+{
+	global $GameState,$playerResponse;
+	$playerResponse['moves'][]=array(
+				'action' => 'play',
+				'object' => 'woodcutter'
+			);
+	$actions -= 1;
+	$money += 2;
+	$buys += 1;
+}
+
+
+
 ?>
