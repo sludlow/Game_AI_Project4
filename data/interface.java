@@ -62,8 +62,7 @@ class PlayerResponse
 	
 	class PlayerMove
 	{
-		String action; // enum of 'play','buy','draw','shuffle','trash'
-		// 'play' will not process 'trash' actions automatically, AI must send back 'trash' action right after.
+		String action; // enum of 'play','buy','draw','shuffle'
 		CardName object; // object of the action
 		CardName[] updateDeck; // used for shuffle only, to send shuffled deck back to turn based engine
 	}

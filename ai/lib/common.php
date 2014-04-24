@@ -18,6 +18,13 @@ foreach ($cards as $card)
 	$card_by_name[$card['name']]=$card;
 }
 
+function setValues()
+{
+	$money = 0;
+	$actions = 1;
+	$buys = 1;
+}
+
 function getBuys()
 {
 	global $buys;
@@ -155,7 +162,7 @@ function numOfCardsOwned($targetCard)
 
 function smithy()
 {
-	global $GameState,$playerResponse;
+	global $GameState,$playerResponse, $actions;
 	$playerResponse['moves'][]=array(
 				'action' => 'play',
 				'object' => 'smithy'
@@ -182,7 +189,7 @@ function laboratory()
 
 function moneylender()
 {
-	global $GameState,$playerResponse, $money, $actions;
+	global $GameState,$playerResponse;
 	$playerResponse['moves'][]=array(
 				'action' => 'play',
 				'object' => 'moneylender'
@@ -205,7 +212,7 @@ function moneylender()
 
 function witch()
 {
-	global $GameState,$playerResponse, $actions;
+	global $GameState,$playerResponse;
 	$playerResponse['moves'][]=array(
 				'action' => 'play',
 				'object' => 'witch'
@@ -224,7 +231,7 @@ function witch()
 
 function festival()
 {
-	global $GameState,$playerResponse, $money, $actions;
+	global $GameState,$playerResponse;
 	$playerResponse['moves'][]=array(
 				'action' => 'play',
 				'object' => 'festival'

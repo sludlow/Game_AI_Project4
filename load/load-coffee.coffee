@@ -159,8 +159,6 @@ waterfall [
 				GameState.players[player_id].hand.push 'estate' # estate stack already adjusted per amount of players
 			for i in [1..2]
 				GameState.players[player_id].deck.push 'estate' # estate stack already adjusted per amount of players
-			GameState.players[player_id].hand = shuffle GameState.players[player_id].hand
-			GameState.players[player_id].deck = shuffle GameState.players[player_id].deck
 		GameState.currentPlayer = GameState.next_player_ids.shift()
 		GameState.next_player_ids.push GameState.currentPlayer
 		
@@ -364,11 +362,6 @@ waterfall [
 				when 'draw'
 					cardFromDeck = GameState.players[GameState.currentPlayer].deck.shift()
 					GameState.players[GameState.currentPlayer].hand.push cardFromDeck
-				when 'trash'
-					for cardName,cardNum in GameState.players[GameState.currentPlayer].hand
-						if cardName is move.object
-							GameState.players[GameState.currentPlayer].hand.splice(cardNum,1)
-							break
 		@proceed()
 	() -> # finalize turn
 		@display_gamestate();

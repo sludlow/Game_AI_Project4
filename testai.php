@@ -2,7 +2,7 @@
 
 chdir('ai');
 include 'lib/common.php';
-
+setValues();
 // Big Money/ Big Smithy
 $hasSmithy = false;
 $numSmithys = -1;
@@ -16,9 +16,9 @@ foreach ($stacks as $cardName)
 	}
 }
 
-$actions = 1;
 $hand = $GameState['players'][$GameState['currentPlayer']]['hand'];
-while($actions != 0)
+
+while(getActions() > 0)
 {
 	if($hasSmithy == true)
 	{
@@ -34,8 +34,11 @@ while($actions != 0)
 		{
 			smithy();
 		}
+		else
+		{
+			break;
+		}
 	}
-	$actions--;
 }
 $coins = count_money();
 play_money();
