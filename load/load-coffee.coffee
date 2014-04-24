@@ -159,6 +159,8 @@ waterfall [
 				GameState.players[player_id].hand.push 'estate' # estate stack already adjusted per amount of players
 			for i in [1..2]
 				GameState.players[player_id].deck.push 'estate' # estate stack already adjusted per amount of players
+			GameState.players[player_id].hand = shuffle GameState.players[player_id].hand
+			GameState.players[player_id].deck = shuffle GameState.players[player_id].deck
 		GameState.currentPlayer = GameState.next_player_ids.shift()
 		GameState.next_player_ids.push GameState.currentPlayer
 		
