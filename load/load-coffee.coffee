@@ -364,6 +364,11 @@ waterfall [
 				when 'draw'
 					cardFromDeck = GameState.players[GameState.currentPlayer].deck.shift()
 					GameState.players[GameState.currentPlayer].hand.push cardFromDeck
+				when 'trash'
+					for cardName,cardNum in GameState.players[GameState.currentPlayer].hand
+						if cardName is move.object
+							GameState.players[GameState.currentPlayer].hand.splice(cardNum,1)
+							break
 		@proceed()
 	() -> # finalize turn
 		@display_gamestate();
