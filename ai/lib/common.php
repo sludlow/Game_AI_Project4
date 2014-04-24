@@ -107,14 +107,13 @@ function buy_card($purchaseCard)
 	}
 }
 
-<<<<<<< HEAD
 function numOfCardsOwned($targetCard)
 {
 	global $GameState;
 	$numCards = 0;
 	$hand = $GameState['players'][$GameState['currentPlayer']]['hand'];
 	$deck = $GameState['players'][$GameState['currentPlayer']]['deck'];
-	$discard = $GameState['players'][$GameState['currentPlayer']]['discard'];
+	//$discard = $GameState['players'][$GameState['currentPlayer']]['discard'];
 	foreach ($hand as $cardName)
 	{
 		if ($cardName == $targetCard)
@@ -152,7 +151,5 @@ function smithy()
 	}
 }
 
-=======
->>>>>>> 422b20d3c836c25ca0799cc219822593178925c2
 
 ?>
