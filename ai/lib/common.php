@@ -20,11 +20,13 @@ foreach ($cards as $card)
 
 function getBuys()
 {
+	global $buys;
 	return $buys;
 }
 
 function getActions()
 {
+	global $actions;
 	return $actions;
 }
 
@@ -53,7 +55,7 @@ function draw_from_deck()
 
 function count_money()
 {
-	global $GameState;
+	global $GameState, $money;
 	$hand = $GameState['players'][$GameState['currentPlayer']]['hand'];
 	$coins = $money;
 	foreach ($hand as $cardName)
@@ -180,9 +182,9 @@ function laboratory()
 
 function moneylender()
 {
-	global $GameState,$playerResponse;
+	global $GameState,$playerResponse, $money, $actions;
 	$playerResponse['moves'][]=array(
-				'action' => 'play',]
+				'action' => 'play',
 				'object' => 'moneylender'
 			);
 	$hand = $GameState['players'][$GameState['currentPlayer']]['hand'];
@@ -203,7 +205,7 @@ function moneylender()
 
 function witch()
 {
-	global $GameState,$playerResponse;
+	global $GameState,$playerResponse, $actions;
 	$playerResponse['moves'][]=array(
 				'action' => 'play',
 				'object' => 'witch'
@@ -222,13 +224,13 @@ function witch()
 
 function festival()
 {
-	global $GameState,$playerResponse;
+	global $GameState,$playerResponse, $money, $actions;
 	$playerResponse['moves'][]=array(
 				'action' => 'play',
 				'object' => 'festival'
 			);
-	money += 2;
-	actions += 1;
+	$money += 2;
+	$actions += 1;
 }
 
 ?>
