@@ -126,7 +126,9 @@ function buy_card($purchaseCard)
 				'object' => $purchaseCard
 			);
 		$stack['amount']--;
+		return true;
 	}
+	return false;
 }
 
 function numOfCardsOwned($targetCard)
@@ -197,16 +199,21 @@ function moneylender()
 	$hand = $GameState['players'][$GameState['currentPlayer']]['hand'];
 	foreach ($hand as $cardName)
 	{
+		$copper = false;
 		if ($cardName == 'copper')
 		{
 			$playerResponse['moves'][]=array(
 					'action' => 'trash',
 					'object' => $cardName
 				);
+				$copper = true;
 				break;
 		}
 	}
-	$money += 3;
+	if($copper == true)
+	{
+		$money += 3;
+	}	
 	$actions -= 1;
 }
 
@@ -247,7 +254,20 @@ function workshop()
 				'action' => 'play',
 				'object' => 'workshop'
 			);
-	 buy_card("gardens");
+	if(!buy_card("gardens"))
+	{}
+	else if(!buy_card("village"))
+	{}
+	else if(!buy_card("woodcutter"))
+	{}
+	else if(!buy_card("workshop"))
+	{}
+	else if(!buy_card("estate"))
+	{}
+	else 
+	{
+		buy_card("copper");
+	}
 	$actions -= 1;
 }
 
