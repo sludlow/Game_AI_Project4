@@ -339,7 +339,8 @@ waterfall [
 			$('#right_bottom_giftbox').html "<table><tr>#{right_bottom_giftbox_htmls.join('')}</tr></table>"
 			$('#status_giftbox').html "<span style='font-size:350%;font-weight:bold;font-variant:small-caps;color:white;background-color:RGBA(51,51,51,0.75);padding:25px;border:3px solid RGBA(255,255,255,0.8);border-radius:10px;box-shadow:0px 0px 30px RGBA(0,0,0,0.5);text-shadow:0px 0px 20px RGBA(0,0,0,0.5);'>#{GameState.players[GameState.currentPlayer].name}'s Turn</span>"
 		@display_gamestate()
-		@proceed()
+		myTimeout ()=>
+			@proceed()
 	() -> # obtain moves from AI
 		$.ajax
 			url: (if debug then './testai.php' else './ai/index.php')
