@@ -146,6 +146,7 @@ waterfall [
 			GameState.next_player_ids.push player_id
 			GameState.players[player_id] =
 				player_id: player_id
+				name: prompt("Please enter the name of player #{i}:","Player #{i}")
 				human: (i is 1)
 				hand: []
 				deck: []
@@ -159,6 +160,8 @@ waterfall [
 				GameState.players[player_id].hand.push 'estate' # estate stack already adjusted per amount of players
 			for i in [1..2]
 				GameState.players[player_id].deck.push 'estate' # estate stack already adjusted per amount of players
+			GameState.players[player_id].hand = shuffle GameState.players[player_id].hand
+			GameState.players[player_id].deck = shuffle GameState.players[player_id].deck
 		GameState.currentPlayer = GameState.next_player_ids.shift()
 		GameState.next_player_ids.push GameState.currentPlayer
 		
@@ -239,6 +242,16 @@ waterfall [
 				<tr>
 					<td valign='middle'>
 						<center id='giftbox'></center>
+					</td>
+				</tr>
+			</table>
+		"
+		# status displayer
+		$(document.body).append "
+			<table id='status_wrapper' width='100%' height='100%'>
+				<tr>
+					<td valign='middle'>
+						<center id='status_giftbox'></center>
 					</td>
 				</tr>
 			</table>
@@ -324,8 +337,10 @@ waterfall [
 				size: 'tiny'
 			right_bottom_giftbox_htmls.push "<td>#{discard.html()}</td>"
 			$('#right_bottom_giftbox').html "<table><tr>#{right_bottom_giftbox_htmls.join('')}</tr></table>"
+			$('#status_giftbox').html "<span style='font-size:350%;font-weight:bold;font-variant:small-caps;color:white;background-color:RGBA(51,51,51,0.75);padding:25px;border:3px solid RGBA(255,255,255,0.8);border-radius:10px;box-shadow:0px 0px 30px RGBA(0,0,0,0.5);text-shadow:0px 0px 20px RGBA(0,0,0,0.5);'>#{GameState.players[GameState.currentPlayer].name}'s Turn</span>"
 		@display_gamestate()
-		@proceed()
+		myTimeout ()=>
+			@proceed()
 	() -> # obtain moves from AI
 		$.ajax
 			url: (if debug then './testai.php' else './ai/index.php')
@@ -335,7 +350,7 @@ waterfall [
 			traditional: true
 			success: (text)=>
 				myTimeout ()=>
-					alert "Player #{GameState.currentPlayer} choose moves:\n#{text}"
+					alert "#{GameState.players[GameState.currentPlayer].name} choose moves:\n#{text}"
 					data = JSON.parse text
 					@playerResponse = data
 					@proceed()
@@ -362,6 +377,11 @@ waterfall [
 				when 'draw'
 					cardFromDeck = GameState.players[GameState.currentPlayer].deck.shift()
 					GameState.players[GameState.currentPlayer].hand.push cardFromDeck
+				when 'trash'
+					for cardName,cardNum in GameState.players[GameState.currentPlayer].hand
+						if cardName is move.object
+							GameState.players[GameState.currentPlayer].hand.splice(cardNum,1)
+							break
 		@proceed()
 	() -> # finalize turn
 		@display_gamestate();

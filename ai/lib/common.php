@@ -283,6 +283,35 @@ function woodcutter()
 	$buys += 1;
 }
 
+function village()
+{
+	global $GameState,$playerResponse,$actions;
+	$playerResponse['moves'][]=array(
+				'action' => 'play',
+				'object' => 'village'
+			);
+	$actions += 2;
+	for($i = 0; $i < 2; $i++)
+	{
+		draw_from_deck();
+	}
+	$actions -= 1;
+}
+
+function market()
+{
+	global $GameState,$playerResponse,$actions,$buys,$money;
+	$playerResponse['moves'][]=array(
+				'action' => 'play',
+				'object' => 'market'
+			);
+	$actions += 1;
+	$buys += 1;
+	draw_from_deck();
+	$money += 1;
+	$actions -= 1;
+}
+
 
 
 ?>
