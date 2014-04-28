@@ -4,9 +4,13 @@ chdir('ai');
 include 'lib/common.php';
 setValues();
 
-$hasSmithy = true;
-$hasGardens = true;
-$hasWorkshop = true;
+$hasSmithy = false;
+$hasGardens = false;
+$hasWorkshop = false;
+
+$hasVillage = false;
+$hasRemodel = false;
+$hasMarket = false;
 
 $stacks=$GameState['actionStacks'];
 foreach ($stacks as $cardName)
@@ -23,25 +27,38 @@ foreach ($stacks as $cardName)
 	{
 		$hasWorkshop = true;
 	}
+	if($cardName['cardName'] == 'village')
+	{
+		$hasVillage = true;
+	}
+	if($cardName['cardName'] == 'market')
+	{
+		$hasMarket = true;
+	}
 }
 
-bigMoney();
+//bigMoney();
+
+//$GameState = read_gamestate();
 
 /*
 if($hasGardens && $hasWorkshop)
 {
 	workingGarden();
 }
+*/
+if($hasSmithy and $hasVillage and $hasMarket)
+{
+	itTakesAVillage();
+}
 else
 {
 	bigMoney();
-}*/
-$GameState = read_gamestate();
+}
 
 function workingGarden()
 {
 	global $GameState;
-	// Big Money/ Big Smithy
 	$hasSmithy = false;
 	$numSmithys = -1;
 	$stacks=$GameState['actionStacks'];
@@ -127,6 +144,114 @@ function workingGarden()
 	}
 }
 
+function itTakesAVillage()
+{
+	global $GameState;
+	
+	$numSmithys  = numOfCardsOwned('smithy');
+	$numVillages = numOfCardsOwned('village');
+	$numMarkets = numOfCardsOwned('market');
+	
+	$numSilvers = numOfCardsOwned('silver');
+	$numGolds = numOfCardsOwned('gold');
+	
+	while(getActions() > 0)
+	{
+		$actionTaken = false;
+		$hand = $GameState['players'][$GameState['currentPlayer']]['hand'];
+		foreach ($hand as $cardName)
+		{
+			if ($cardName == 'market')
+			{
+				market();
+				$actionTaken = true;
+				break;
+			}
+			else if($cardName == 'village')
+			{
+				village();
+				$actionTaken = true;
+				break;
+			}
+			else if($cardName == 'smithy')
+			{
+				smithy();
+				$actionTaken = true;
+				break;
+			}
+			
+		}
+		if($actionTaken == false)
+		{	
+			break;
+		}
+	}
+	
+	$coins = count_money();
+	play_money();
+	$buys = getBuys();
+	while($buys > 0)
+	{
+		$cardsBought = false;
+		if($coins >= 4 and $numSmithys == 0)
+		{
+			buy_card('smithy');
+			$coins -= 4;
+			$cardsBought = true;
+			$buys--;
+		}
+		else if($coins >= 3 and $numSilvers == 0)
+		{
+			buy_card('silver');
+			$coins -= 3;
+			$cardsBought = true;
+			$buys--;
+		}
+		else if($coins >= 6 and $numGolds == 0)
+		{
+			buy_card('gold');
+			$coins -= 6;
+			$cardsBought = true;
+			$buys--;
+		}
+		else if($coins >= 5 and $numMarkets < 5)
+		{
+			buy_card('market');
+			$coins -= 5;
+			$cardsBought = true;
+			$buys--;
+		}
+		else if($coins >= 3 and $numVillages <= $numSmithys and $numVillages < 4)
+		{
+			buy_card('village');
+			$coins -= 3;
+			$cardsBought = true;
+			$buys--;
+		}	
+		else if($coins >= 4 and $numSmithys <= $numVillages and $numSmithys < 4)
+		{
+			buy_card('smithy');
+			$coins -= 4;
+			$cardsBought = true;
+			$buys--;
+		}		
+		else if($coins >= 8 and $numSmithys == 4)
+		{
+			buy_card('province');
+			$coins -= 8;
+			$cardsBought = true;
+			$buys--;
+		}
+		
+		if($cardsBought == false)
+		{
+			break;
+		}
+	}
+}
+
+
+// Big Money/Big Smithy
 function bigMoney()
 {
 	global $GameState;
