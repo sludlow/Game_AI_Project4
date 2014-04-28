@@ -285,7 +285,11 @@ function woodcutter()
 
 function village()
 {
+<<<<<<< HEAD
 	global $GameState,$playerResponse,$actions;
+=======
+	global $GameState,$playerResponse;
+>>>>>>> 08a19b42706c492a42a8521f6a53034280c9a41e
 	$playerResponse['moves'][]=array(
 				'action' => 'play',
 				'object' => 'village'
@@ -295,21 +299,37 @@ function village()
 	{
 		draw_from_deck();
 	}
+<<<<<<< HEAD
 	$actions -= 1;
+=======
+	$actions--;
+>>>>>>> 08a19b42706c492a42a8521f6a53034280c9a41e
 }
 
 function market()
 {
+<<<<<<< HEAD
 	global $GameState,$playerResponse,$actions,$buys,$money;
+=======
+	global $GameState,$playerResponse;
+>>>>>>> 08a19b42706c492a42a8521f6a53034280c9a41e
 	$playerResponse['moves'][]=array(
 				'action' => 'play',
 				'object' => 'market'
 			);
+<<<<<<< HEAD
 	$actions += 1;
 	$buys += 1;
 	draw_from_deck();
 	$money += 1;
 	$actions -= 1;
+=======
+	$actions++;
+	$buys++;
+	draw_from_deck();
+	$money++;
+	$actions--;
+>>>>>>> 08a19b42706c492a42a8521f6a53034280c9a41e
 }
 
 
