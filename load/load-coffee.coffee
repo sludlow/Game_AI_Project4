@@ -94,7 +94,12 @@ myTimeout = (func) -> setTimeout func,300
 
 waterfall [
 	() -> # initial settings
-		@num_of_players = 2;
+		@num_of_players = 3;
+		@strategies = shuffle [
+			'It Takes A Village'
+			'Working Garden'
+			'Big Money'
+		];
 		@proceed()
 	() -> # obtain card information
 		$.getJSON('./data/cards.json').done (data)=>
@@ -102,16 +107,23 @@ waterfall [
 			@proceed()
 	() -> # initialize GameState
 		# generate actionStacks
-		actionStacks = []
+		actionStacks = [
+			{cardName: 'village', amount: 10}
+			{cardName: 'market', amount: 10}
+			{cardName: 'smithy', amount: 10}
+			{cardName: 'workshop', amount: 10}
+			{cardName: 'woodcutter', amount: 10}
+			{cardName: 'gardens', amount: (if @num_of_players is 2 then 8 else 12)}
+		];
 		while actionStacks.length<10
 			card = choose @cards
 			if ['action','action-attack','action-reaction'].some((a)->a is card.type) or card.name is 'gardens'
 				if actionStacks.every((a)->a.cardName isnt card.name)
 					actionStacks.push
-						cardName:card.name
-						amount:10
+						cardName: card.name
+						amount: if card.name isnt 'gardens' then 10 else if @num_of_players is 2 then 8 else 12
 		GameState.actionStacks={};
-		actionStacks.forEach (a)->GameState.actionStacks[a.cardName]=a;
+		shuffle(actionStacks).forEach (a)->GameState.actionStacks[a.cardName]=a;
 		
 		# generate moneyStacks
 		GameState.moneyStacks=
@@ -146,8 +158,8 @@ waterfall [
 			GameState.next_player_ids.push player_id
 			GameState.players[player_id] =
 				player_id: player_id
-				name: prompt("Please enter the name of player #{i}:","Player #{i}")
-				human: (i is 1)
+				name: prompt("Please enter the name of player #{i}:","\"#{@strategies[i-1]}\"-Preferring Player (##{i})")
+				strategy: @strategies[i-1]
 				hand: []
 				deck: []
 				discard: []
@@ -337,7 +349,7 @@ waterfall [
 				size: 'tiny'
 			right_bottom_giftbox_htmls.push "<td>#{discard.html()}</td>"
 			$('#right_bottom_giftbox').html "<table><tr>#{right_bottom_giftbox_htmls.join('')}</tr></table>"
-			$('#status_giftbox').html "<span style='font-size:350%;font-weight:bold;font-variant:small-caps;color:white;background-color:RGBA(51,51,51,0.75);padding:25px;border:3px solid RGBA(255,255,255,0.8);border-radius:10px;box-shadow:0px 0px 30px RGBA(0,0,0,0.5);text-shadow:0px 0px 20px RGBA(0,0,0,0.5);'>#{GameState.players[GameState.currentPlayer].name}'s Turn</span>"
+			$('#status_giftbox').html "<span style='font-size:250%;font-weight:bold;font-variant:small-caps;color:white;background-color:RGBA(51,51,51,0.75);padding:25px;border:3px solid RGBA(255,255,255,0.8);border-radius:10px;box-shadow:0px 0px 30px RGBA(0,0,0,0.5);text-shadow:0px 0px 20px RGBA(0,0,0,0.5);'>#{GameState.players[GameState.currentPlayer].name}'s Turn</span>"
 		@display_gamestate()
 		myTimeout ()=>
 			@proceed()
@@ -386,7 +398,7 @@ waterfall [
 	() -> # finalize turn
 		@display_gamestate();
 		myTimeout ()=>
-			if not confirm "Player #{GameState.currentPlayer}'s turn has ended.\n\nClick Cancel to end game."
+			if not confirm "#{GameState.players[GameState.currentPlayer].name}'s turn has ended.\n\nClick Cancel to end game."
 				return
 			for cardPlayed in GameState.cardsPlayedInTurn
 				GameState.players[GameState.currentPlayer].discard.unshift cardPlayed
