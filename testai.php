@@ -155,7 +155,6 @@ function itTakesAVillage()
 	$numSilvers = numOfCardsOwned('silver');
 	$numGolds = numOfCardsOwned('gold');
 	
-<<<<<<< HEAD
 	$actions = getActions();
 	$cardsPlayed = array();
 	while($actions > 0)
@@ -192,37 +191,6 @@ function itTakesAVillage()
 		if($actionTaken == false)
 		{	
 			$actions = 0;
-=======
-	while(getActions() > 0)
-	{
-		$actionTaken = false;
-		$hand = $GameState['players'][$GameState['currentPlayer']]['hand'];
-		foreach ($hand as $cardName)
-		{
-			if ($cardName == 'market')
-			{
-				market();
-				$actionTaken = true;
-				break;
-			}
-			else if($cardName == 'village')
-			{
-				village();
-				$actionTaken = true;
-				break;
-			}
-			else if($cardName == 'smithy')
-			{
-				smithy();
-				$actionTaken = true;
-				break;
-			}
-			
-		}
-		if($actionTaken == false)
-		{	
-			break;
->>>>>>> 08a19b42706c492a42a8521f6a53034280c9a41e
 		}
 	}
 	
@@ -284,11 +252,7 @@ function itTakesAVillage()
 		
 		if($cardsBought == false)
 		{
-<<<<<<< HEAD
 			$buys = 0;
-=======
-			break;
->>>>>>> 08a19b42706c492a42a8521f6a53034280c9a41e
 		}
 	}
 }
