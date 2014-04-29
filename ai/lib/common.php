@@ -118,6 +118,21 @@ function buy_card($purchaseCard)
 {
 	global $GameState,$playerResponse;
 	$stacks=$GameState['actionStacks']+$GameState['moneyStacks']+$GameState['pointStacks'];
+	
+	$ok = false;
+	foreach ($stacks as $cardName)
+	{
+		if ($cardName['cardName'] == $purchaseCard)
+		{
+			$ok = true;
+		}
+	}
+	
+	if(!$ok)
+	{
+		return false;
+	}
+		
 	$stack = $stacks[$purchaseCard];
 	if($stack['amount']>0)
 	{
@@ -191,7 +206,7 @@ function laboratory()
 
 function moneylender()
 {
-	global $GameState,$playerResponse;
+	global $GameState,$playerResponse, $actions, $money;
 	$playerResponse['moves'][]=array(
 				'action' => 'play',
 				'object' => 'moneylender'
@@ -238,7 +253,7 @@ function witch()
 
 function festival()
 {
-	global $GameState,$playerResponse;
+	global $GameState,$playerResponse, $actions, $money;
 	$playerResponse['moves'][]=array(
 				'action' => 'play',
 				'object' => 'festival'
@@ -249,20 +264,20 @@ function festival()
 
 function workshop()
 {
-	global $GameState,$playerResponse;
+	global $GameState,$playerResponse, $actions, $money;
 	$playerResponse['moves'][]=array(
 				'action' => 'play',
 				'object' => 'workshop'
 			);
-	if(!buy_card("gardens"))
+	if(buy_card("gardens"))
 	{}
-	else if(!buy_card("village"))
+	else if(buy_card("village"))
 	{}
-	else if(!buy_card("woodcutter"))
+	else if(buy_card("woodcutter"))
 	{}
-	else if(!buy_card("workshop"))
+	else if(buy_card("workshop"))
 	{}
-	else if(!buy_card("estate"))
+	else if(buy_card("estate"))
 	{}
 	else 
 	{
@@ -273,7 +288,7 @@ function workshop()
 
 function woodcutter()
 {
-	global $GameState,$playerResponse;
+	global $GameState,$playerResponse, $actions, $money, $buys;
 	$playerResponse['moves'][]=array(
 				'action' => 'play',
 				'object' => 'woodcutter'

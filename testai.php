@@ -12,6 +12,8 @@ $hasVillage = false;
 $hasRemodel = false;
 $hasMarket = false;
 
+$hasWoodcutter = false;
+
 $stacks=$GameState['actionStacks'];
 foreach ($stacks as $cardName)
 {
@@ -35,19 +37,22 @@ foreach ($stacks as $cardName)
 	{
 		$hasMarket = true;
 	}
+	if($cardName['cardName'] == 'woodcutter')
+	{
+		$hasWoodcutter = true;
+	}
 }
 
 //bigMoney();
 
 //$GameState = read_gamestate();
 
-/*
+
 if($hasGardens && $hasWorkshop)
 {
 	workingGarden();
 }
-*/
-if($hasSmithy and $hasVillage and $hasMarket)
+else if($hasSmithy and $hasVillage and $hasMarket)
 {
 	itTakesAVillage();
 }
@@ -56,91 +61,102 @@ else
 	bigMoney();
 }
 
+
+
 function workingGarden()
 {
-	global $GameState;
-	$hasSmithy = false;
-	$numSmithys = -1;
-	$stacks=$GameState['actionStacks'];
+	global $GameState, $hasWoodcutter, $hasVillage;
 	
-	$playedWorkshop = 0;
-	$playedVillage = 0;
-	$playedWoodcutter = 0;
+	$numVillages = numOfCardsOwned('village');
+	$numWorkshops = numOfCardsOwned('market');
+	
+	$numSilvers = numOfCardsOwned('silver');
+	$numGolds = numOfCardsOwned('gold');
+	
 
-	while(getActions() > 0)
+	$actions = getActions();
+	$cardsPlayed = array();
+	while($actions > 0)
 	{
-			$numWorkshop = 0;
-			$numVillage = 0;
-			$numWoodcutter = 0;
-			$playWorkshop = false;
-			$playVillage = false;
-			$playWoodcutter = false;
-			$hand = $GameState['players'][$GameState['currentPlayer']]['hand'];
-			
-			foreach ($hand as $cardName)
-			{
-				if ($cardName == 'Workshop')
-				{
-					$numWorkshop +=1;
-					if($numWorkshop - $playedWorkshop > 0)
-					{
-						$playWorkshop = true;
-					}
-				}
-				if ($cardName == 'village')
-				{
-					$numVillage +=1;
-					if($numVillage - $playedVillage > 0)
-					{
-						$playVillage = true;
-					}
-				}
-				if ($cardName == 'Woodcutter')
-				{
-					$numWoodcutter +=1;
-					if($numWoodcutter - $playedWoodcutter > 0)
-					{
-						$playWoodcutter = true;
-					}
-				}
-			}
-			if($playVillage == true)
+		$actionTaken = false;
+		$hand = $GameState['players'][$GameState['currentPlayer']]['hand'];
+		$index = 0;
+		foreach ($hand as $cardName)
+		{
+			if ($cardName == 'village' and in_array($index, $cardsPlayed) != true)
 			{
 				village();
+				$cardsPlayed[] = $index;
+				$actionTaken = true;
+				break;
 			}
-			if($playWorkshop)
+			if($cardName == 'workshop' and in_array($index, $cardsPlayed) != true)
 			{
 				workshop();
+				$cardsPlayed[] = $index;
+				$actionTaken = true;
+				break;
 			}
-			else if($playWoodcutter)
+			else if($cardName == 'woodcutter' and in_array($index, $cardsPlayed) != true)
 			{
 				woodcutter();
+				$cardsPlayed[] = $index;
+				$actionTaken = true;
+				break;
 			}
+			$index++;
+		}
+		$actions = getActions();
+		if($actionTaken == false)
+		{	
+			$actions = 0;
+		}
 	}
+	
 	$coins = count_money();
 	play_money();
-	
 	$buys = getBuys();
-	
 	while($buys > 0)
 	{
 		$buys--;
-	}
-	if($coins >= 4)
-	{
-		buy_card('smithy');
-	}
-	else if($coins >= 8)
-	{
-		buy_card('province');
-	}
-	else if($coins == 6 or $coins == 7)
-	{
-		buy_card('gold');
-	}
-	else if($coins == 5 or $coins == 4 or $coins == 3)
-	{
-		buy_card('silver');
+		if($coins >= 3 and $numWorkshops <= 2 and buy_card('workshop'))
+		{
+			$coins -= 3;
+		}
+		else if($coins >= 4 and buy_card('gardens'))
+		{
+			$coins -= 4;
+		}
+		else if($coins >= 3)
+		{
+			$num = rand(0,19);
+			$coins -= 3;
+			if($num < 5 and $hasVillage and buy_card('village'))
+			{}
+			else if($num < 10 and buy_card('workshop'))
+			{}
+			else if($num < 15 and $hasWoodcutter and buy_card('woodcutter'))
+			{}
+			else
+			{
+				if(buy_card('estate'))
+				{
+					$coins += 1;
+				}
+				else if(buy_card('workshop'))
+				{}
+				else
+				{
+					buy_card('sliver');
+				}
+			}
+		}
+		else if($coins >= 2 and buy_card('estate'))
+		{}
+		else
+		{
+			buy_card('copper');
+		}
 	}
 }
 
@@ -155,6 +171,7 @@ function itTakesAVillage()
 	$numSilvers = numOfCardsOwned('silver');
 	$numGolds = numOfCardsOwned('gold');
 	
+
 	$actions = getActions();
 	$cardsPlayed = array();
 	while($actions > 0)
