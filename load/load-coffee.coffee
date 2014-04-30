@@ -43,7 +43,7 @@ cardholder = (stacks=[], options) ->
 	rv.addCard = (cardName) ->
 		rv.cardNames.push cardName
 	rv.html = () ->
-		tds = _.map(@stacks,(a)->"<td data-card='#{a.cardName}' data-amount='#{a.amount}' style='#{if a.amount is 0 then 'opacity:0.25' else ''}'></td>").join('');
+		tds = _.map(@stacks,(a)->"<td data-card='#{a.cardName}' data-amount='#{a.amount}' style='#{if a.amount <= 0 then 'opacity:0.25' else ''}'></td>").join('');
 		"
 			<table class='#{@classNames.join(' ')}' style='display:none;' #{@attributes.join(' ')}>
 				<tr>
