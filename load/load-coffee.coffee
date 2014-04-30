@@ -352,7 +352,7 @@ waterfall [
 			$('#right_bottom_giftbox').html "<table><tr>#{right_bottom_giftbox_htmls.join('')}</tr></table>"
 			$('#status_giftbox').html "<span class='status'>#{GameState.players[GameState.currentPlayer].name}'s Turn</span>"
 			player = GameState.players[GameState.currentPlayer]
-			player_cards = player.deck.concat player.hand.concat player.discard
+			player_cards = player.deck.concat player.hand.concat player.discard.concat GameState.cardsPlayedInTurn
 			count = 
 				gardens: 0
 				estate: 0
