@@ -314,10 +314,7 @@ function village()
 				'object' => 'village'
 			);
 	$actions += 2;
-	for($i = 0; $i < 2; $i++)
-	{
-		draw_from_deck();
-	}
+	draw_from_deck();
 	$actions -= 1;
 }
 
