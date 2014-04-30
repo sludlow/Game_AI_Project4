@@ -435,6 +435,8 @@ waterfall [
 				for player_id of GameState.players
 					player = GameState.players[player_id]
 					player_cards = player.deck.concat player.hand.concat player.discard
+					if player_id is GameState.currentPlayer
+						player_cards = player_cards.concat GameState.cardsPlayedInTurn
 					count = 
 						gardens: 0
 						estate: 0
