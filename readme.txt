@@ -1,0 +1,1 @@
+To run the project place in your local host directory on your computer or if you don't have one download and use WAMP and then open a webbrowser and navigate to 'localhost'
