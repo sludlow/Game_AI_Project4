@@ -195,7 +195,7 @@ waterfall [
 			html = ""
 			if !$(@).closest('table.cardholder').attr('data-hidecount')
 				html += "<div class='card_count_wrapper'>"
-				html += "<center class='card_count_giftbox'>#{$(@).attr('data-amount')}</center>"
+				html += "<center class='card_count_giftbox'>#{(+$(@).attr('data-amount'))||0}</center>"
 				html += "</div>"
 			html += "<img#{width_attr} class='card' src='./images/cards/"
 			html += $(@).attr('data-card').toLowerCase().replace(`/[^a-zA-Z0-9]/g`,'')
@@ -425,12 +425,12 @@ waterfall [
 		myTimeout ()=>
 			numEmptyActionStacks = 0;
 			for cardName of GameState.actionStacks
-				if GameState.actionStacks[cardName].amount is 0
+				if GameState.actionStacks[cardName].amount <= 0
 					numEmptyActionStacks++
 			
 			numProvinces = GameState.pointStacks.province.amount
 			
-			if numEmptyActionStacks >= 3 or numProvinces is 0
+			if numEmptyActionStacks >= 3 or numProvinces <= 0
 				points = []
 				for player_id of GameState.players
 					player = GameState.players[player_id]
