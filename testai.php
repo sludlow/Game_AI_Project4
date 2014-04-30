@@ -43,22 +43,47 @@ foreach ($stacks as $cardName)
 	}
 }
 
-//bigMoney();
-
-//$GameState = read_gamestate();
-
-
-if($hasGardens && $hasWorkshop)
+$preferred_strategy = $GameState['players'][$GameState['currentPlayer']]['strategy'];
+$strategy_applicable = true;
+switch ($preferred_strategy)
 {
-	workingGarden();
+	case 'It Takes A Village':
+		if (!($hasSmithy and $hasVillage and $hasMarket))
+			$strategy_applicable = false;
+		break;
+	case 'Working Garden':
+		if (!($hasGardens and $hasWorkshop))
+			$strategy_applicable = false;
+		break;
+	case 'Big Money':
+		break;
 }
-else if($hasSmithy and $hasVillage and $hasMarket)
+if (!$strategy_applicable)
 {
-	itTakesAVillage();
+	if ($hasGardens and $hasWorkshop)
+	{
+		$preferred_strategy = 'Working Garden';
+	}
+	else if ($hasSmithy and $hasVillage and $hasMarket)
+	{
+		$preferred_strategy = 'It Takes A Village';
+	}
+	else
+	{
+		$preferred_strategy = 'Big Money';
+	}
 }
-else
+switch ($preferred_strategy)
 {
-	bigMoney();
+	case 'It Takes A Village':
+		itTakesAVillage();
+		break;
+	case 'Working Garden':
+		workingGarden();
+		break;
+	case 'Big Money':
+		bigMoney();
+		break;
 }
 
 

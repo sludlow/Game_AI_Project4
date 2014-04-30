@@ -27,6 +27,10 @@ cardholder = (stacks=[], options) ->
 	if options
 		{width,height,size,orientation,hidecount}=options
 	rv = {}
+	rv.classNames = ['cardholder']
+	if orientation
+		rv.classNames.push orientation
+	rv.stacks = stacks
 	rv.attributes = []
 	if width
 		rv.attributes.push "data-width='#{width}'"
@@ -36,10 +40,6 @@ cardholder = (stacks=[], options) ->
 		rv.attributes.push "data-size='#{size}'"
 	if hidecount
 		rv.attributes.push "data-hidecount='true'"
-	rv.classNames = ['cardholder']
-	if orientation
-		rv.classNames.push orientation
-	rv.stacks = stacks
 	rv.addCard = (cardName) ->
 		rv.cardNames.push cardName
 	rv.html = () ->
@@ -321,6 +321,7 @@ waterfall [
 			else
 				$('#giftbox').html ''
 			
+			GameState.players[GameState.currentPlayer].hand = GameState.players[GameState.currentPlayer].hand.filter (a)->(typeof a is 'string') and (a.trim() isnt '')
 			if GameState.players[GameState.currentPlayer].hand.length > 0
 				hand = new cardholder toStacks(GameState.players[GameState.currentPlayer].hand),
 					height: 1
@@ -349,7 +350,8 @@ waterfall [
 				size: 'tiny'
 			right_bottom_giftbox_htmls.push "<td>#{discard.html()}</td>"
 			$('#right_bottom_giftbox').html "<table><tr>#{right_bottom_giftbox_htmls.join('')}</tr></table>"
-			$('#status_giftbox').html "<span style='font-size:250%;font-weight:bold;font-variant:small-caps;color:white;background-color:RGBA(51,51,51,0.75);padding:25px;border:3px solid RGBA(255,255,255,0.8);border-radius:10px;box-shadow:0px 0px 30px RGBA(0,0,0,0.5);text-shadow:0px 0px 20px RGBA(0,0,0,0.5);'>#{GameState.players[GameState.currentPlayer].name}'s Turn</span>"
+			$('#status_giftbox').html "<span class='status'>#{GameState.players[GameState.currentPlayer].name}'s Turn</span>"
+		
 		@display_gamestate()
 		myTimeout ()=>
 			@proceed()
@@ -363,6 +365,7 @@ waterfall [
 			success: (text)=>
 				myTimeout ()=>
 					alert "#{GameState.players[GameState.currentPlayer].name} choose moves:\n#{text}"
+					console.log "#{GameState.players[GameState.currentPlayer].name} choose moves:\n#{text}"
 					data = JSON.parse text
 					@playerResponse = data
 					@proceed()
@@ -370,13 +373,15 @@ waterfall [
 		for move in @playerResponse.moves
 			switch move.action
 				when 'buy'
+					bought_card = undefined
 					if move.object of GameState.actionStacks
 						bought_card = stack_draw GameState.actionStacks[move.object]
 					else if move.object of GameState.moneyStacks
 						bought_card = stack_draw GameState.moneyStacks[move.object]
 					else if move.object of GameState.pointStacks
 						bought_card = stack_draw GameState.pointStacks[move.object]
-					GameState.players[GameState.currentPlayer].discard.unshift bought_card
+					if bought_card
+						GameState.players[GameState.currentPlayer].discard.unshift bought_card
 				when 'play'
 					for cardName,cardNum in GameState.players[GameState.currentPlayer].hand
 						if cardName is move.object
@@ -387,6 +392,8 @@ waterfall [
 					GameState.players[GameState.currentPlayer].deck = move.updateDeck
 					GameState.players[GameState.currentPlayer].discard = []
 				when 'draw'
+					if GameState.players[GameState.currentPlayer].deck.length is 0
+						reset_discard GameState.players[GameState.currentPlayer]
 					cardFromDeck = GameState.players[GameState.currentPlayer].deck.shift()
 					GameState.players[GameState.currentPlayer].hand.push cardFromDeck
 				when 'trash'
@@ -398,22 +405,55 @@ waterfall [
 	() -> # finalize turn
 		@display_gamestate();
 		myTimeout ()=>
-			if not confirm "#{GameState.players[GameState.currentPlayer].name}'s turn has ended.\n\nClick Cancel to end game."
-				return
-			for cardPlayed in GameState.cardsPlayedInTurn
-				GameState.players[GameState.currentPlayer].discard.unshift cardPlayed
-			GameState.cardsPlayedInTurn=[]
-			for cardInHand in GameState.players[GameState.currentPlayer].hand
-				GameState.players[GameState.currentPlayer].discard.unshift cardInHand
-			GameState.players[GameState.currentPlayer].hand=[]
-			for i in [1..5]
-				if GameState.players[GameState.currentPlayer].deck.length is 0
-					reset_discard GameState.players[GameState.currentPlayer]
-				cardFromDeck = GameState.players[GameState.currentPlayer].deck.shift()
-				GameState.players[GameState.currentPlayer].hand.push cardFromDeck
+			numEmptyActionStacks = 0;
+			for cardName of GameState.actionStacks
+				if GameState.actionStacks[cardName].amount is 0
+					numEmptyActionStacks++
 			
-			GameState.currentPlayer = GameState.next_player_ids.shift()
-			GameState.next_player_ids.push GameState.currentPlayer
-			@display_gamestate()
-			@proceed(-2)
+			numProvinces = GameState.pointStacks.province.amount
+			
+			if numEmptyActionStacks >= 3 or numProvinces is 0
+				points = []
+				for player_id of GameState.players
+					player = GameState.players[player_id]
+					player_cards = player.deck.concat player.hand.concat player.discard
+					count = 
+						gardens: 0
+						estate: 0
+						duchy: 0
+						province: 0
+						curse: 0
+					for cardName in player_cards
+						if cardName of count
+							count[cardName]++
+					points[player_id] = 0;
+					points[player_id] += count.gardens*Math.floor(player_cards.length/10);
+					points[player_id] += count.estate*1;
+					points[player_id] += count.duchy*3;
+					points[player_id] += count.province*6;
+					points[player_id] += count.curse*-1;
+				[winner_player_id,winner_points]=_.sortBy(_.pairs(points),1)[0]
+				
+				$('#status_giftbox').html "<span class='status'>#{GameState.players[winner_player_id].name} has won the game!</span>"
+				myTimeout () =>
+					alert "#{GameState.players[GameState.currentPlayer].name}'s turn has ended.\n\n#{GameState.players[winner_player_id].name} has won the game with #{winner_points}!"
+			else if confirm "#{GameState.players[GameState.currentPlayer].name}'s turn has ended.\n\nClick Cancel to end game."
+				@proceed();
+	() ->
+		for cardPlayed in GameState.cardsPlayedInTurn
+			GameState.players[GameState.currentPlayer].discard.unshift cardPlayed
+		GameState.cardsPlayedInTurn=[]
+		for cardInHand in GameState.players[GameState.currentPlayer].hand
+			GameState.players[GameState.currentPlayer].discard.unshift cardInHand
+		GameState.players[GameState.currentPlayer].hand=[]
+		for i in [1..5]
+			if GameState.players[GameState.currentPlayer].deck.length is 0
+				reset_discard GameState.players[GameState.currentPlayer]
+			cardFromDeck = GameState.players[GameState.currentPlayer].deck.shift()
+			GameState.players[GameState.currentPlayer].hand.push cardFromDeck
+		
+		GameState.currentPlayer = GameState.next_player_ids.shift()
+		GameState.next_player_ids.push GameState.currentPlayer
+		@display_gamestate()
+		@proceed(-3)
 ]
