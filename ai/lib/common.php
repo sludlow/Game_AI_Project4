@@ -40,6 +40,14 @@ function getActions()
 function draw_from_deck()
 {
 	global $GameState,$playerResponse;
+	if (
+		(count($GameState['players'][$GameState['currentPlayer']]['deck']) == 0)
+		and
+		(count($GameState['players'][$GameState['currentPlayer']]['discard']) == 0)
+	)
+	{
+		return null;
+	}
 	if (count($GameState['players'][$GameState['currentPlayer']]['deck']) == 0)
 	{
 		$newDeck = $GameState['players'][$GameState['currentPlayer']]['discard'];
@@ -273,11 +281,11 @@ function workshop()
 	{}
 	else if(buy_card("village"))
 	{}
+	else if(buy_card("woodcutter"))
+	{}
 	else if(buy_card("workshop"))
 	{}
 	else if(buy_card("estate"))
-	{}
-	else if(buy_card("woodcutter"))
 	{}
 	else 
 	{
