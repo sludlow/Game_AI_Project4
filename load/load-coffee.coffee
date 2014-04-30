@@ -284,7 +284,7 @@ waterfall [
 		$(document.body).append "
 			<table id='right_bottom_wrapper'>
 				<tr>
-					<td id='right_bottom_giftbox' valign='middle'></td>
+					<td id='right_bottom_giftbox' valign='middle' style='text-align:right;'></td>
 				</tr>
 			</table>
 		"
@@ -332,6 +332,24 @@ waterfall [
 			else
 				$('#bottom_giftbox').html ''
 			
+			player = GameState.players[GameState.currentPlayer]
+			player_cards = player.deck.concat player.hand.concat player.discard.concat GameState.cardsPlayedInTurn
+			count = 
+				gardens: 0
+				estate: 0
+				duchy: 0
+				province: 0
+				curse: 0
+			for cardName in player_cards
+				if cardName of count
+					count[cardName]++
+			points = 0;
+			points += count.gardens*Math.floor(player_cards.length/10);
+			points += count.estate*1;
+			points += count.duchy*3;
+			points += count.province*6;
+			points += count.curse*-1;
+			console.log "#{GameState.players[GameState.currentPlayer].name} currently has #{points} points."
 			right_bottom_giftbox_htmls = []
 			deck_display =
 				cardName: 'back'
@@ -351,24 +369,6 @@ waterfall [
 			right_bottom_giftbox_htmls.push "<td>#{discard.html()}</td>"
 			$('#right_bottom_giftbox').html "<table><tr>#{right_bottom_giftbox_htmls.join('')}</tr></table>"
 			$('#status_giftbox').html "<span class='status'>#{GameState.players[GameState.currentPlayer].name}'s Turn</span>"
-			player = GameState.players[GameState.currentPlayer]
-			player_cards = player.deck.concat player.hand.concat player.discard.concat GameState.cardsPlayedInTurn
-			count = 
-				gardens: 0
-				estate: 0
-				duchy: 0
-				province: 0
-				curse: 0
-			for cardName in player_cards
-				if cardName of count
-					count[cardName]++
-			points = 0;
-			points += count.gardens*Math.floor(player_cards.length/10);
-			points += count.estate*1;
-			points += count.duchy*3;
-			points += count.province*6;
-			points += count.curse*-1;
-			console.log "#{GameState.players[GameState.currentPlayer].name} currently has #{points} points."
 		
 		@display_gamestate()
 		myTimeout ()=>
@@ -452,11 +452,11 @@ waterfall [
 					points[player_id] += count.duchy*3;
 					points[player_id] += count.province*6;
 					points[player_id] += count.curse*-1;
-				[winner_player_id,winner_points]=_.last(_.sortBy(_.pairs(points),1))
+				[winner_player_id,winner_points]=_.first(_.sortBy(_.pairs(points),1).reverse())
 				
 				$('#status_giftbox').html "<span class='status'>#{GameState.players[winner_player_id].name} has won the game!</span>"
 				myTimeout () =>
-					alert "#{GameState.players[GameState.currentPlayer].name}'s turn has ended.\n\n#{GameState.players[winner_player_id].name} has won the game with #{winner_points} points!"
+					alert "#{GameState.players[GameState.currentPlayer].name}'s turn has ended.\n\n#{GameState.players[winner_player_id].name} has won the game with #{winner_points} points!\n"+_.map(_.rest(_.sortBy(_.pairs(points),1).reverse()),(a)->"#{GameState.players[a[0]].name} had #{a[1]} points.").join("\n")
 					console.log "#{GameState.players[winner_player_id].name} has won the game with #{winner_points} points!"
 			else if confirm "#{GameState.players[GameState.currentPlayer].name}'s turn has ended.\n\nClick Cancel to end game."
 				@proceed();
