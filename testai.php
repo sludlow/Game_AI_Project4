@@ -14,6 +14,8 @@ $hasMarket = false;
 
 $hasWoodcutter = false;
 
+var_dump($_POST);
+
 $stacks=$GameState['actionStacks'];
 foreach ($stacks as $cardName)
 {
