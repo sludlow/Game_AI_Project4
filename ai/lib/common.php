@@ -273,11 +273,11 @@ function workshop()
 	{}
 	else if(buy_card("village"))
 	{}
-	else if(buy_card("woodcutter"))
-	{}
 	else if(buy_card("workshop"))
 	{}
 	else if(buy_card("estate"))
+	{}
+	else if(buy_card("woodcutter"))
 	{}
 	else 
 	{

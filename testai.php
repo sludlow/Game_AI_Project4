@@ -156,11 +156,11 @@ function workingGarden()
 		{
 			$num = rand(0,19);
 			$coins -= 3;
-			if($num < 5 and $hasVillage and buy_card('village'))
+			if($num < 7 and $hasVillage and buy_card('village'))
 			{}
-			else if($num < 10 and buy_card('workshop'))
+			else if($num < 14 and buy_card('workshop'))
 			{}
-			else if($num < 15 and $hasWoodcutter and buy_card('woodcutter'))
+			else if($num < 16 and $hasWoodcutter and buy_card('woodcutter'))
 			{}
 			else
 			{
