@@ -158,7 +158,7 @@ waterfall [
 			GameState.next_player_ids.push player_id
 			GameState.players[player_id] =
 				player_id: player_id
-				name: prompt("Please enter the name of player #{i}:","\"#{@strategies[i-1]}\"-Preferring Player (##{i})")
+				name: "\"#{@strategies[i-1]}\"-Preferring Player (##{i})"
 				strategy: @strategies[i-1]
 				hand: []
 				deck: []
